@@ -302,8 +302,7 @@ class _LoginPageState extends State<LoginPage> {
     // Simulate login process
     _showSnackBar('Login berhasil!');
 
-    // Here you would typically navigate to the main app
-    // Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()));
+    context.push('/home');
   }
 
   void _handleRegister() {

@@ -15,7 +15,6 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.green, fontFamily: 'Roboto'),
       routerConfig: router,
       debugShowCheckedModeBanner: false,
-            
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:simbah/pages/login_page.dart';
 import 'package:simbah/pages/register_page.dart';
 import 'package:simbah/pages/splash_page.dart';
+import 'package:simbah/pages/user/home_page.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/',
@@ -14,11 +15,7 @@ final GoRouter router = GoRouter(
       path: '/register',
       builder: (context, state) => const RegisterPage(),
     ),
-    GoRoute(
-      path: '/home',
-      builder: (context, state) =>
-          const Scaffold(body: Center(child: Text('Home Page'))),
-    ),
+    GoRoute(path: '/home', builder: (context, state) => DashboardPage()),
   ],
 
   errorBuilder: (context, state) => Scaffold(
