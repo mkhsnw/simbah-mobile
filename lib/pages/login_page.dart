@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -70,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                         SizedBox(height: 4),
                         Text(
-                          'Bank Sampah Pusat Jawa',
+                          'Bank Sampah Pagar Idum',
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey.shade600,
@@ -280,14 +281,6 @@ class _LoginPageState extends State<LoginPage> {
                       ],
                     ),
                   ),
-
-                  SizedBox(height: 32),
-
-                  // Footer
-                  Text(
-                    'Built with Magic Reward',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                  ),
                 ],
               ),
             ),
@@ -315,8 +308,7 @@ class _LoginPageState extends State<LoginPage> {
 
   void _handleRegister() {
     _showSnackBar('Navigasi ke halaman registrasi');
-    // Navigate to register page
-    // Navigator.push(context, MaterialPageRoute(builder: (context) => RegisterPage()));
+    context.push('/register');
   }
 
   void _showSnackBar(String message) {
