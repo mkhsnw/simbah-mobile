@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:simbah/services/auth_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -22,7 +23,7 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
-  void _handleRegister() {
+  void _handleRegister() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -32,12 +33,15 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    // TODO: Implementasi logika registrasi (misal: panggil API)
-    _showSnackBar('Registrasi berhasil!');
-    
-    // Kembali ke halaman login setelah berhasil
-    if (mounted) {
-      context.go('/login');
+    final response = await AuthService().register(email, password, name);
+
+    if (response.status) {
+      _showSnackBar('Registrasi berhasil! Silakan masuk.');
+      if (mounted) {
+        context.go('/login');
+      }
+    } else {
+      _showSnackBar('Registrasi gagal: ${response.message}');
     }
   }
 
@@ -226,20 +230,20 @@ class _RegisterPageState extends State<RegisterPage> {
           obscureText: _obscurePassword,
           decoration: _inputDecoration('Masukkan password', Icons.lock_outline)
               .copyWith(
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscurePassword
-                    ? Icons.visibility_off_outlined
-                    : Icons.visibility_outlined,
-                color: Colors.grey.shade500,
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
+                    color: Colors.grey.shade500,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
               ),
-              onPressed: () {
-                setState(() {
-                  _obscurePassword = !_obscurePassword;
-                });
-              },
-            ),
-          ),
         ),
       ],
     );

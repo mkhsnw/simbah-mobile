@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:simbah/services/auth_service.dart';
+import 'package:simbah/utils/token.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -290,19 +292,25 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _handleLogin() {
+  void _handleLogin() async {
     String username = _usernameController.text.trim();
     String password = _passwordController.text.trim();
 
     if (username.isEmpty || password.isEmpty) {
-      _showSnackBar('Username dan password harus diisi');
+      _showSnackBar('Username dan password tidak boleh kosong!');
       return;
     }
 
-    // Simulate login process
-    _showSnackBar('Login berhasil!');
+    final loginResponse = await AuthService().login(username, password);
 
-    context.push('/home');
+    if (loginResponse.success) {
+      // Simulate login process
+      _showSnackBar('Login berhasil!');
+      setToken(loginResponse.token);
+      context.push('/home');
+    } else {
+      _showSnackBar('Login gagal! Periksa username dan password Anda.');
+    }
   }
 
   void _handleRegister() {

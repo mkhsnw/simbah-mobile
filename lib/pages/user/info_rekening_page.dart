@@ -1,7 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:simbah/models/user_model.dart';
+import 'package:simbah/services/user_service.dart';
 
-class InfoRekeningPage extends StatelessWidget {
+class InfoRekeningPage extends StatefulWidget {
+  @override
+  State<InfoRekeningPage> createState() => _InfoRekeningPageState();
+}
+
+class _InfoRekeningPageState extends State<InfoRekeningPage> {
+  final UserService _userService = UserService();
+  Data? _userData; // Menggunakan Data class dari model yang sudah ada
+  bool _isLoading = true;
+  String _errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
+    try {
+      final response = await _userService.getUserInfo();
+
+      print('Response success: ${response.success}');
+      print('Response data: ${response.data}');
+      print('Response rekening: ${response.data?.rekening}');
+
+      if (response.success && response.data != null) {
+        setState(() {
+          _userData = response.data;
+          _isLoading = false;
+        });
+        print('User Data loaded - rekening: ${_userData?.rekening}');
+      } else {
+        setState(() {
+          _errorMessage = response.message.isEmpty
+              ? 'Gagal memuat data user'
+              : response.message;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Terjadi kesalahan: $e';
+        _isLoading = false;
+      });
+      print('Exception: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -10,10 +63,7 @@ class InfoRekeningPage extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Colors.green.shade600,
-              Colors.green.shade400,
-            ],
+            colors: [Colors.green.shade600, Colors.green.shade400],
           ),
         ),
         child: SafeArea(
@@ -45,16 +95,21 @@ class InfoRekeningPage extends StatelessWidget {
                         ),
                       ],
                     ),
-                    Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        Icons.logout,
-                        color: Colors.white,
-                        size: 24,
+                    GestureDetector(
+                      onTap: () {
+                        // Handle logout
+                      },
+                      child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.logout,
+                          color: Colors.white,
+                          size: 24,
+                        ),
                       ),
                     ),
                   ],
@@ -73,77 +128,16 @@ class InfoRekeningPage extends StatelessWidget {
                     width: 1,
                   ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Info Rekening',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.credit_card,
-                          color: Colors.white.withOpacity(0.9),
-                          size: 20,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'No. Rekening',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      '123456789',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: 1.2,
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Saldo Anda',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 14,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Rp 350.000',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Bank Sampah',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 12,
-                      ),
-                    ),
-                  ],
-                ),
+                child: _isLoading
+                    ? _buildLoadingWidget()
+                    : _errorMessage.isNotEmpty
+                    ? _buildErrorWidget()
+                    : _buildUserInfoWidget(),
               ),
 
               SizedBox(height: 30),
 
-              // Content Area
+              // Content Area (tetap sama)
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -178,8 +172,8 @@ class InfoRekeningPage extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 20),
-                        
-                        // Steps
+
+                        // Steps (tetap sama seperti sebelumnya)
                         _buildStepItem(
                           1,
                           'Datang ke Bank Sampah Pagar Idum dengan membawa KTP',
@@ -203,7 +197,7 @@ class InfoRekeningPage extends StatelessWidget {
 
                         SizedBox(height: 24),
 
-                        // Catatan
+                        // Catatan (tetap sama seperti sebelumnya)
                         Container(
                           padding: EdgeInsets.all(16),
                           decoration: BoxDecoration(
@@ -261,6 +255,132 @@ class InfoRekeningPage extends StatelessWidget {
     );
   }
 
+  Widget _buildLoadingWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Info Rekening',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 40),
+        Center(child: CircularProgressIndicator(color: Colors.white)),
+        SizedBox(height: 40),
+      ],
+    );
+  }
+
+  Widget _buildErrorWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Info Rekening',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 16),
+        Container(
+          padding: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.red.withOpacity(0.2),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            children: [
+              Icon(Icons.error_outline, color: Colors.white, size: 40),
+              SizedBox(height: 8),
+              Text(
+                _errorMessage,
+                style: TextStyle(color: Colors.white, fontSize: 14),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 12),
+              ElevatedButton(
+                onPressed: _loadUserData,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.green.shade600,
+                ),
+                child: Text('Coba Lagi'),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUserInfoWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Info Rekening',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 16),
+        Row(
+          children: [
+            Icon(
+              Icons.credit_card,
+              color: Colors.white.withOpacity(0.9),
+              size: 20,
+            ),
+            SizedBox(width: 8),
+            Text(
+              'No. Rekening',
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.9),
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 4),
+        Text(
+          _userData?.rekening ?? '-',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.2,
+          ),
+        ),
+        SizedBox(height: 20),
+        Text(
+          'Saldo Anda',
+          style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
+        ),
+        SizedBox(height: 4),
+        Text(
+          _userData?.formattedBalance ?? 'Rp 0',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 32,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          'Bank Sampah',
+          style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
+        ),
+      ],
+    );
+  }
+
   Widget _buildStepItem(int number, String text, Color color) {
     return Container(
       margin: EdgeInsets.only(bottom: 16),
@@ -270,10 +390,7 @@ class InfoRekeningPage extends StatelessWidget {
           Container(
             width: 28,
             height: 28,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             child: Center(
               child: Text(
                 number.toString(),
