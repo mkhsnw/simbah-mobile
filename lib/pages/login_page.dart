@@ -306,7 +306,7 @@ class _LoginPageState extends State<LoginPage> {
     if (loginResponse.success) {
       // Simulate login process
       _showSnackBar('Login berhasil!');
-      setToken(loginResponse.token);
+      AuthManager.saveToken(loginResponse.token);
       context.push('/home');
     } else {
       _showSnackBar('Login gagal! Periksa username dan password Anda.');

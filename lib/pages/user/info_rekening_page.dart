@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:simbah/models/user_model.dart';
+import 'package:simbah/services/transaction_service.dart';
 import 'package:simbah/services/user_service.dart';
 
 class InfoRekeningPage extends StatefulWidget {
@@ -47,11 +49,35 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
         });
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'Terjadi kesalahan: $e';
-        _isLoading = false;
+      if (e is UnauthorizedException) {
+        await _handleUnauthorized();
+      } else {
+        setState(() {
+          _errorMessage = 'Terjadi kesalahan: $e';
+          _isLoading = false;
+        });
+        print('Exception: $e');
+      }
+    }
+  }
+
+  Future<void> _handleUnauthorized() async {
+    // Tampilkan dialog atau snackbar
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Sesi Anda telah berakhir. Silakan login kembali.'),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      // Redirect ke halaman login setelah delay singkat
+      Future.delayed(Duration(seconds: 2), () {
+        if (mounted) {
+          context.go('/login'); // Atau route login Anda
+        }
       });
-      print('Exception: $e');
     }
   }
 

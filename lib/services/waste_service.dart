@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:simbah/config/api.dart';
-import 'package:simbah/models/user_model.dart';
+import 'package:simbah/models/waste_mode.dart';
 import 'package:simbah/services/transaction_service.dart';
 import 'package:simbah/utils/token.dart';
+import 'package:http/http.dart' as http;
 
-class UserService {
-  Future<UserResponse> getUserInfo({BuildContext? context}) async {
+class WasteService {
+  Future<WasteModel> getWasteData({BuildContext? context}) async {
     try {
       final token = await AuthManager.getToken();
       if (token == null) {
@@ -17,7 +17,7 @@ class UserService {
         throw Exception('Token tidak ditemukan');
       }
       final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/auth/me'),
+        Uri.parse('${ApiConfig.baseUrl}/waste'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -25,24 +25,20 @@ class UserService {
         },
       );
 
-      print('User Info Response Code: ${response.statusCode}');
-      print('User Info Response Body: ${response.body}');
+      print('Waste Data Response Code: ${response.statusCode}');
+      print('Waste Data Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-
-        // Menggunakan UserResponse.fromJson yang sudah disesuaikan
-        return UserResponse.fromJson(data);
+        return WasteModel.fromJson(data);
       } else if (response.statusCode == 401) {
         throw UnauthorizedException('Unauthorized access. Please login again.');
       } else {
-        return UserResponse.error(
-          'Gagal mengambil data user: ${response.reasonPhrase}',
-        );
+        throw Exception('Failed to load waste data: ${response.reasonPhrase}');
       }
     } catch (e) {
-      print('Error getting user info: $e');
-      return UserResponse.error('Terjadi kesalahan jaringan: $e');
+      print('Error: $e');
+      throw Exception('Terjadi kesalahan saat memuat data');
     }
   }
 }
