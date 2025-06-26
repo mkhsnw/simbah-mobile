@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    final response = await AuthService().register(email, password, name);
+    final response = await AuthService().register(email, password, name, "USER");
 
     if (response.status) {
       _showSnackBar('Registrasi berhasil! Silakan masuk.');

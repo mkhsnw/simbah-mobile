@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:simbah/services/auth_service.dart';
+import 'package:simbah/services/user_service.dart';
 import 'package:simbah/utils/token.dart';
 
 class LoginPage extends StatefulWidget {
@@ -300,16 +301,29 @@ class _LoginPageState extends State<LoginPage> {
       _showSnackBar('Username dan password tidak boleh kosong!');
       return;
     }
+    try {
+      final loginResponse = await AuthService().login(username, password);
 
-    final loginResponse = await AuthService().login(username, password);
-
-    if (loginResponse.success) {
-      // Simulate login process
-      _showSnackBar('Login berhasil!');
-      AuthManager.saveToken(loginResponse.token);
-      context.push('/home');
-    } else {
-      _showSnackBar('Login gagal! Periksa username dan password Anda.');
+      if (loginResponse.success) {
+        _showSnackBar('Login berhasil!');
+        AuthManager.saveToken(loginResponse.token);
+        final user = await UserService().getUserInfo();
+        if (user.data?.role == 'ADMIN') {
+          _showSnackBar('Login berhasil! ke admin');
+          context.push('/admin/dashboard');
+        } else {
+          _showSnackBar('Login berhasil! ke user');
+          context.push('/home');
+        }
+      } else {
+        _showSnackBar('Login gagal! Periksa username dan password Anda.');
+      }
+    } catch (e) {
+      if (e is AuthException) {
+        _showSnackBar(e.message);
+      } else {
+        _showSnackBar('Terjadi kesalahan: ${e.toString()}');
+      }
     }
   }
 

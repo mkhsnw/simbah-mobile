@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:simbah/models/user_model.dart';
 import 'package:simbah/services/transaction_service.dart';
 import 'package:simbah/services/user_service.dart';
+import 'package:simbah/utils/token.dart';
 
 class InfoRekeningPage extends StatefulWidget {
   @override
@@ -11,7 +12,7 @@ class InfoRekeningPage extends StatefulWidget {
 
 class _InfoRekeningPageState extends State<InfoRekeningPage> {
   final UserService _userService = UserService();
-  Data? _userData; // Menggunakan Data class dari model yang sudah ada
+  DataUser? _userData; // Menggunakan Data class dari model yang sudah ada
   bool _isLoading = true;
   String _errorMessage = '';
 
@@ -126,15 +127,25 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                         // Handle logout
                       },
                       child: Container(
-                        padding: EdgeInsets.all(8),
+                        padding: EdgeInsets.all(4),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(
-                          Icons.logout,
-                          color: Colors.white,
-                          size: 24,
+                        child: IconButton(
+                          onPressed: () {
+                            try {
+                              AuthManager.clearToken();
+                              context.go('/login'); // Redirect ke halaman login
+                            } catch (e) {
+                              print('Error during logout: $e');
+                            }
+                          },
+                          icon: Icon(
+                            Icons.logout,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                       ),
                     ),
