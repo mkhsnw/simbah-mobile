@@ -759,6 +759,7 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
   }
 
   void _showAddTransactionDialog() {
+    final _formKey = GlobalKey<FormState>(); // Tambahkan form key
     final amountController = TextEditingController();
     final descriptionController = TextEditingController();
     final weightController = TextEditingController();
@@ -774,102 +775,35 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
       builder: (context) => StatefulBuilder(
         builder: (context, setDialogState) => AlertDialog(
           title: Text('Tambah Transaksi'),
+          contentPadding: EdgeInsets.fromLTRB(24, 20, 24, 0), // Custom padding
           content: Container(
-            width: double.maxFinite,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // User Dropdown
-                  DropdownButtonFormField<String>(
-                    value: selectedUserId,
-                    decoration: InputDecoration(
-                      labelText: 'Nama User',
-                      border: OutlineInputBorder(),
-                    ),
-                    hint: _isLoadingUsers
-                        ? Row(
-                            children: [
-                              SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              ),
-                              SizedBox(width: 8),
-                              Text('Memuat user...'),
-                            ],
-                          )
-                        : Text('Pilih User'),
-                    items: _users.map((user) {
-                      return DropdownMenuItem<String>(
-                        value: user.id,
-                        child: Text(user.name),
-                      );
-                    }).toList(),
-                    onChanged: _isLoadingUsers
-                        ? null
-                        : (value) {
-                            setDialogState(() {
-                              selectedUserId = value;
-                              selectedUserName = _users
-                                  .firstWhere(
-                                    (user) => user.id == value,
-                                    orElse: () => DataUser(
-                                      id: '',
-                                      name: '',
-                                      email: '',
-                                      balance: '0',
-                                      rekening: '',
-                                      role: 'USER',
-                                    ),
-                                  )
-                                  .name;
-                            });
-                          },
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Pilih user terlebih dahulu';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 16),
-
-                  // Transaction Type Dropdown
-                  DropdownButtonFormField<String>(
-                    value: selectedType,
-                    decoration: InputDecoration(
-                      labelText: 'Tipe Transaksi',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: ['DEPOSIT', 'WITHDRAWAL']
-                        .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                        .toList(),
-                    onChanged: (value) {
-                      setDialogState(() {
-                        selectedType = value!;
-                        // Reset waste selection when type changes
-                        selectedWasteId = null;
-                        selectedWasteName = '';
-                        weightController.clear();
-                        amountController.clear();
-                      });
-                    },
-                  ),
-                  SizedBox(height: 16),
-
-                  // Waste Type Dropdown (only for setoran)
-                  if (selectedType == 'DEPOSIT') ...[
+            width: MediaQuery.of(context).size.width * 0.9, // Responsive width
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height * 0.7, // Max height
+              maxWidth: 500, // Maximum width untuk tablet/desktop
+            ),
+            child: Form(
+              // Wrap dengan Form
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // User Dropdown
                     DropdownButtonFormField<String>(
-                      value: selectedWasteId,
+                      value: selectedUserId,
                       decoration: InputDecoration(
-                        labelText: 'Jenis Sampah',
+                        labelText: 'Nama User',
                         border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                       ),
-                      hint: _isLoadingWastes
+                      hint: _isLoadingUsers
                           ? Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
                                 SizedBox(
                                   width: 16,
@@ -879,148 +813,290 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
                                   ),
                                 ),
                                 SizedBox(width: 8),
-                                Text('Memuat jenis sampah...'),
+                                Flexible(child: Text('Memuat user...')),
                               ],
                             )
-                          : Text('Pilih Jenis Sampah'),
-                      items: _wasteTypes.map((waste) {
+                          : Text('Pilih User'),
+                      isExpanded: true, // Mencegah overflow
+                      items: _users.map((user) {
                         return DropdownMenuItem<String>(
-                          value: waste.id,
+                          value: user.id,
                           child: Text(
-                            '${waste.name} (Rp ${waste.pricePerKg}/kg)',
+                            user.name,
+                            overflow:
+                                TextOverflow.ellipsis, // Handle long names
                           ),
                         );
                       }).toList(),
-                      onChanged: _isLoadingWastes
+                      onChanged: _isLoadingUsers
                           ? null
                           : (value) {
                               setDialogState(() {
-                                selectedWasteId = value;
-                                final selectedWaste = _wasteTypes.firstWhere(
-                                  (waste) => waste.id == value,
-                                  orElse: () => WasteData(
-                                    id: '',
-                                    name: '',
-                                    pricePerKg: '0',
-                                  ),
-                                );
-                                selectedWasteName = selectedWaste.name;
-
-                                // Auto calculate amount when weight is entered
-                                if (weightController.text.isNotEmpty) {
-                                  final weight =
-                                      double.tryParse(weightController.text) ??
-                                      0;
-                                  final pricePerKg =
-                                      double.tryParse(
-                                        selectedWaste.pricePerKg,
-                                      ) ??
-                                      0;
-                                  final totalAmount = (weight * pricePerKg)
-                                      .round();
-                                  amountController.text = totalAmount
-                                      .toString();
-                                }
+                                selectedUserId = value;
+                                selectedUserName = _users
+                                    .firstWhere(
+                                      (user) => user.id == value,
+                                      orElse: () => DataUser(
+                                        id: '',
+                                        name: '',
+                                        email: '',
+                                        balance: '0',
+                                        rekening: '',
+                                        role: 'USER',
+                                      ),
+                                    )
+                                    .name;
                               });
                             },
                       validator: (value) {
-                        if (selectedType == 'DEPOSIT' &&
-                            (value == null || value.isEmpty)) {
-                          return 'Pilih jenis sampah terlebih dahulu';
-                        }
-                        return null;
-                      },
-                    ),
-                    SizedBox(height: 16),
-
-                    // Weight Field (only for setoran)
-                    TextField(
-                      controller: weightController,
-                      decoration: InputDecoration(
-                        labelText: 'Berat (kg)',
-                        border: OutlineInputBorder(),
-                        suffixText: 'kg',
-                      ),
-                      keyboardType: TextInputType.numberWithOptions(
-                        decimal: true,
-                      ),
-                      onChanged: (value) {
-                        // Auto calculate amount when weight changes
-                        if (selectedWasteId != null && value.isNotEmpty) {
-                          final weight = double.tryParse(value) ?? 0;
-                          final selectedWaste = _wasteTypes.firstWhere(
-                            (waste) => waste.id == selectedWasteId,
-                            orElse: () =>
-                                WasteData(id: '', name: '', pricePerKg: '0'),
-                          );
-                          final pricePerKg =
-                              double.tryParse(selectedWaste.pricePerKg) ?? 0;
-                          final totalAmount = (weight * pricePerKg).round();
-                          setDialogState(() {
-                            amountController.text = totalAmount.toString();
-                          });
-                        }
-                      },
-                    ),
-                    SizedBox(height: 16),
-                  ],
-
-                  // Amount Field (only for penarikan or readonly for setoran)
-                  if (selectedType == 'WITHDRAWAL') ...[
-                    TextField(
-                      controller: amountController,
-                      decoration: InputDecoration(
-                        labelText: 'Jumlah',
-                        prefixText: 'Rp ',
-                        border: OutlineInputBorder(),
-                      ),
-                      keyboardType: TextInputType.number,
-                    ),
-                    SizedBox(height: 16),
-                  ] else ...[
-                    TextFormField(
-                      controller: amountController,
-                      decoration: InputDecoration(
-                        labelText: 'Total Pendapatan',
-                        prefixText: 'Rp ',
-                        border: OutlineInputBorder(),
-                        helperText: 'Minimal Rp. 50.000',
-                        helperStyle: TextStyle(color: Colors.grey.shade600),
-                        enabled: false,
-                      ),
-                      keyboardType: TextInputType.number,
-                      validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'Jumlah harus diisi';
+                          return 'Pilih user terlebih dahulu';
                         }
-
-                        final amount = int.tryParse(
-                          value.replaceAll(RegExp(r'[^0-9]'), ''),
-                        );
-                        if (amount == null) {
-                          return 'Masukkan jumlah yang valid';
-                        }
-
-                        if (amount < 50000) {
-                          return 'Minimal penarikan Rp 50.000';
-                        }
-
                         return null;
                       },
                     ),
                     SizedBox(height: 16),
-                  ],
 
-                  // Description Field
-                  TextField(
-                    controller: descriptionController,
-                    decoration: InputDecoration(
-                      labelText: 'Deskripsi',
-                      border: OutlineInputBorder(),
+                    // Transaction Type Dropdown
+                    DropdownButtonFormField<String>(
+                      value: selectedType,
+                      decoration: InputDecoration(
+                        labelText: 'Tipe Transaksi',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                      ),
+                      isExpanded: true,
+                      items: ['DEPOSIT', 'WITHDRAWAL']
+                          .map(
+                            (e) => DropdownMenuItem(value: e, child: Text(e)),
+                          )
+                          .toList(),
+                      onChanged: (value) {
+                        setDialogState(() {
+                          selectedType = value!;
+                          selectedWasteId = null;
+                          selectedWasteName = '';
+                          weightController.clear();
+                          amountController.clear();
+                        });
+                      },
                     ),
-                    maxLines: 2,
-                  ),
-                ],
+                    SizedBox(height: 16),
+
+                    // Waste Type Dropdown (only for setoran)
+                    if (selectedType == 'DEPOSIT') ...[
+                      DropdownButtonFormField<String>(
+                        value: selectedWasteId,
+                        decoration: InputDecoration(
+                          labelText: 'Jenis Sampah',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        hint: _isLoadingWastes
+                            ? Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: 16,
+                                    height: 16,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                  SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text('Memuat jenis sampah...'),
+                                  ),
+                                ],
+                              )
+                            : Text('Pilih Jenis Sampah'),
+                        isExpanded: true, // Key fix untuk mencegah overflow
+                        items: _wasteTypes.map((waste) {
+                          return DropdownMenuItem<String>(
+                            value: waste.id,
+                            child: Container(
+                              width: double.infinity,
+                              child: Text(
+                                '${waste.name} (Rp ${waste.pricePerKg}/kg)',
+                                overflow:
+                                    TextOverflow.ellipsis, // Handle long text
+                                maxLines: 1,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: _isLoadingWastes
+                            ? null
+                            : (value) {
+                                setDialogState(() {
+                                  selectedWasteId = value;
+                                  final selectedWaste = _wasteTypes.firstWhere(
+                                    (waste) => waste.id == value,
+                                    orElse: () => WasteData(
+                                      id: '',
+                                      name: '',
+                                      pricePerKg: '0',
+                                    ),
+                                  );
+                                  selectedWasteName = selectedWaste.name;
+
+                                  if (weightController.text.isNotEmpty) {
+                                    final weight =
+                                        double.tryParse(
+                                          weightController.text,
+                                        ) ??
+                                        0;
+                                    final pricePerKg =
+                                        double.tryParse(
+                                          selectedWaste.pricePerKg,
+                                        ) ??
+                                        0;
+                                    final totalAmount = (weight * pricePerKg)
+                                        .round();
+                                    amountController.text = totalAmount
+                                        .toString();
+                                  }
+                                });
+                              },
+                        validator: (value) {
+                          if (selectedType == 'DEPOSIT' &&
+                              (value == null || value.isEmpty)) {
+                            return 'Pilih jenis sampah terlebih dahulu';
+                          }
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16),
+
+                      // Weight Field
+                      TextFormField(
+                        controller: weightController,
+                        decoration: InputDecoration(
+                          labelText: 'Berat (kg)',
+                          border: OutlineInputBorder(),
+                          suffixText: 'kg',
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        keyboardType: TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        validator: (value) {
+                          if (selectedType == 'DEPOSIT' &&
+                              (value == null || value.isEmpty)) {
+                            return 'Berat harus diisi';
+                          }
+                          if (selectedType == 'DEPOSIT') {
+                            final weight = double.tryParse(value!);
+                            if (weight == null || weight <= 0) {
+                              return 'Berat harus lebih dari 0';
+                            }
+                          }
+                          return null;
+                        },
+                        onChanged: (value) {
+                          if (selectedWasteId != null && value.isNotEmpty) {
+                            final weight = double.tryParse(value) ?? 0;
+                            final selectedWaste = _wasteTypes.firstWhere(
+                              (waste) => waste.id == selectedWasteId,
+                              orElse: () =>
+                                  WasteData(id: '', name: '', pricePerKg: '0'),
+                            );
+                            final pricePerKg =
+                                double.tryParse(selectedWaste.pricePerKg) ?? 0;
+                            final totalAmount = (weight * pricePerKg).round();
+                            setDialogState(() {
+                              amountController.text = totalAmount.toString();
+                            });
+                          }
+                        },
+                      ),
+                      SizedBox(height: 16),
+                    ],
+
+                    // Amount Field
+                    if (selectedType == 'WITHDRAWAL') ...[
+                      TextFormField(
+                        controller: amountController,
+                        decoration: InputDecoration(
+                          labelText: 'Jumlah Penarikan',
+                          prefixText: 'Rp ',
+                          border: OutlineInputBorder(),
+                          helperText: 'Minimal Rp 50.000',
+                          helperStyle: TextStyle(color: Colors.grey.shade600),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        keyboardType: TextInputType.number,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Jumlah harus diisi';
+                          }
+
+                          final amount = int.tryParse(
+                            value.replaceAll(RegExp(r'[^0-9]'), ''),
+                          );
+                          if (amount == null) {
+                            return 'Masukkan jumlah yang valid';
+                          }
+
+                          if (amount < 50000) {
+                            return 'Minimal penarikan Rp 50.000';
+                          }
+
+                          return null;
+                        },
+                      ),
+                      SizedBox(height: 16),
+                    ] else ...[
+                      TextFormField(
+                        controller: amountController,
+                        decoration: InputDecoration(
+                          labelText: 'Total Pendapatan',
+                          prefixText: 'Rp ',
+                          border: OutlineInputBorder(),
+                          enabled: false,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                        keyboardType: TextInputType.number,
+                      ),
+                      SizedBox(height: 16),
+                    ],
+
+                    // Description Field
+                    TextFormField(
+                      controller: descriptionController,
+                      decoration: InputDecoration(
+                        labelText: 'Deskripsi',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
+                      ),
+                      maxLines: 2,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Deskripsi harus diisi';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -1033,77 +1109,76 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
               onPressed: isLoading
                   ? null
                   : () async {
-                      bool isValid = false;
-
-                      if (selectedType == 'DEPOSIT') {
-                        isValid =
-                            selectedUserId != null &&
-                            selectedUserId!.isNotEmpty &&
-                            selectedWasteId != null &&
-                            selectedWasteId!.isNotEmpty &&
-                            weightController.text.isNotEmpty &&
-                            amountController.text.isNotEmpty;
-                      } else {
-                        isValid =
-                            selectedUserId != null &&
-                            selectedUserId!.isNotEmpty &&
-                            amountController.text.isNotEmpty;
+                      if (!_formKey.currentState!.validate()) {
+                        return;
                       }
 
-                      if (isValid) {
-                        setDialogState(() {
-                          isLoading = true;
-                        });
+                      setDialogState(() {
+                        isLoading = true;
+                      });
 
-                        try {
-                          if (selectedType == 'DEPOSIT') {
-                            await _transactionService.createTransactionDeposit(
-                              type: selectedType,
-                              userId: selectedUserId!,
-                              description: descriptionController.text,
-                              items: [
-                                {
-                                  'wasteCategoryId': int.tryParse(
-                                    selectedWasteId!,
-                                  ),
-                                  'weightInKg':
-                                      double.tryParse(weightController.text) ??
-                                      0,
-                                },
-                              ],
-                              context: context,
+                      try {
+                        if (selectedType == 'DEPOSIT') {
+                          await _transactionService.createTransactionDeposit(
+                            type: selectedType,
+                            userId: selectedUserId!,
+                            description: descriptionController.text.trim(),
+                            items: [
+                              {
+                                'wasteCategoryId': int.tryParse(
+                                  selectedWasteId!,
+                                ),
+                                'weightInKg':
+                                    double.tryParse(weightController.text) ?? 0,
+                              },
+                            ],
+                            context: context,
+                          );
+                        } else {
+                          final amount =
+                              int.tryParse(
+                                amountController.text.replaceAll(
+                                  RegExp(r'[^0-9]'),
+                                  '',
+                                ),
+                              ) ??
+                              0;
+
+                          if (amount < 50000) {
+                            _showSnackBar(
+                              'Minimal penarikan adalah Rp 50.000',
+                              Colors.red,
                             );
-                          } else {
-                            await _transactionService.createTransactionWithdraw(
-                              type: selectedType,
-                              userId: selectedUserId!,
-                              amount: int.tryParse(amountController.text) ?? 0,
-                              description: descriptionController.text,
-                              context: context,
-                            );
+                            setDialogState(() {
+                              isLoading = false;
+                            });
+                            return;
                           }
 
-                          Navigator.pop(context);
-                          _showSnackBar(
-                            'Transaksi berhasil ditambahkan',
-                            Colors.green,
+                          await _transactionService.createTransactionWithdraw(
+                            type: selectedType,
+                            userId: selectedUserId!,
+                            amount: amount,
+                            description: descriptionController.text.trim(),
+                            context: context,
                           );
-                          _loadTransactions(); // Refresh data
-                        } catch (e) {
-                          _showSnackBar(
-                            'Gagal menambahkan transaksi: ${e.toString()}',
-                            Colors.red,
-                          );
-                        } finally {
-                          setDialogState(() {
-                            isLoading = false;
-                          });
                         }
-                      } else {
+
+                        Navigator.pop(context);
                         _showSnackBar(
-                          'Mohon isi semua field yang diperlukan',
+                          'Transaksi berhasil ditambahkan',
+                          Colors.green,
+                        );
+                        _loadTransactions();
+                      } catch (e) {
+                        _showSnackBar(
+                          'Gagal menambahkan transaksi: ${e.toString()}',
                           Colors.red,
                         );
+                      } finally {
+                        setDialogState(() {
+                          isLoading = false;
+                        });
                       }
                     },
               style: ElevatedButton.styleFrom(
@@ -1226,6 +1301,7 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
                                 ],
                               )
                             : Text('Pilih Jenis Sampah'),
+                        isExpanded: true,
                         items: _wasteTypes.map((waste) {
                           return DropdownMenuItem<String>(
                             value: waste.id,

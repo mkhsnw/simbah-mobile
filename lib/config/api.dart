@@ -1,5 +1,5 @@
 class ApiConfig {
-  static const String baseUrl = 'http://192.168.1.26:3000/api';
+  static const String baseUrl = 'http://103.193.179.6:3001/v1';
   static const Duration timeout = Duration(seconds: 30);
-  static const String registerEndpoint = '${baseUrl}/auth/register';
+  static const String registerEndpoint = '${baseUrl}s/auth/register';
 }

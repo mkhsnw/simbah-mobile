@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:simbah/config/api.dart';
 import 'package:simbah/models/waste_mode.dart';
 import 'package:simbah/services/transaction_service.dart';
+import 'package:simbah/utils/exception_manager.dart';
 import 'package:simbah/utils/token.dart';
 import 'package:http/http.dart' as http;
 
@@ -31,11 +32,25 @@ class WasteService {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         return WasteModelGet.fromJson(data);
+      } else if (response.statusCode == 404) {
+        // Throw custom exception untuk no data
+        final data = json.decode(response.body);
+        throw NoDataException(data['message'] ?? 'Data sampah tidak ditemukan');
       } else if (response.statusCode == 401) {
         throw UnauthorizedException('Unauthorized access. Please login again.');
       } else {
-        throw Exception('Failed to load waste data: ${response.reasonPhrase}');
+        final data = json.decode(response.body);
+        throw Exception(
+          data['message'] ??
+              'Failed to load waste data: ${response.reasonPhrase}',
+        );
       }
+    } on NoDataException {
+      // Re-throw NoDataException untuk ditangani di UI
+      rethrow;
+    } on UnauthorizedException {
+      // Re-throw UnauthorizedException
+      rethrow;
     } catch (e) {
       print('Error: $e');
       throw Exception('Terjadi kesalahan saat memuat data');

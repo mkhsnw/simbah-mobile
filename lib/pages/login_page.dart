@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:simbah/services/auth_service.dart';
 import 'package:simbah/services/user_service.dart';
+import 'package:simbah/utils/exception_manager.dart';
 import 'package:simbah/utils/token.dart';
 
 class LoginPage extends StatefulWidget {
@@ -12,7 +13,7 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final _usernameController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
@@ -106,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Username',
+                              'Email',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
@@ -115,14 +116,14 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             SizedBox(height: 8),
                             TextField(
-                              controller: _usernameController,
+                              controller: _emailController,
                               decoration: InputDecoration(
-                                hintText: 'Masukkan username',
+                                hintText: 'Masukkan Email',
                                 prefixIcon: Icon(
-                                  Icons.person_outline,
+                                  Icons.email_outlined,
                                   color: Colors.grey.shade500,
                                 ),
-                                filled: true,
+                                filled: true, 
                                 fillColor: Colors.grey.shade50,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -294,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleLogin() async {
-    String username = _usernameController.text.trim();
+    String username = _emailController.text.trim();
     String password = _passwordController.text.trim();
 
     if (username.isEmpty || password.isEmpty) {
@@ -345,7 +346,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }

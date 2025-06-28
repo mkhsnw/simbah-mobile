@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:simbah/services/auth_service.dart';
+import 'package:simbah/utils/exception_manager.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -29,27 +30,51 @@ class _RegisterPageState extends State<RegisterPage> {
     final password = _passwordController.text.trim();
 
     if (name.isEmpty || email.isEmpty || password.isEmpty) {
-      _showSnackBar('Semua field harus diisi');
+      _showSnackBar('Semua field harus diisi', Colors.red.shade600);
       return;
     }
+    try {
+      final response = await AuthService().register(
+        email,
+        password,
+        name,
+        "USER",
+      );
 
-    final response = await AuthService().register(email, password, name, "USER");
-
-    if (response.status) {
-      _showSnackBar('Registrasi berhasil! Silakan masuk.');
-      if (mounted) {
-        context.go('/login');
+      if (response.status) {
+        _showSnackBar(
+          'Registrasi berhasil! Silakan masuk.',
+          Colors.green.shade600,
+        );
+        if (mounted) {
+          context.go('/login');
+        }
+      } else {
+        _showSnackBar(
+          'Registrasi gagal: ${response.message}',
+          Colors.red.shade600,
+        );
       }
-    } else {
-      _showSnackBar('Registrasi gagal: ${response.message}');
+    } on AuthException catch (e) {
+      if (mounted) {
+        _showSnackBar(e.message, Colors.red);
+      }
+    } catch (e) {
+      if (mounted) {
+        _showSnackBar(
+          'Terjadi kesalahan yang tidak terduga'
+          ' saat registrasi: ${e.toString()}',
+          Colors.red.shade600,
+        );
+      }
     }
   }
 
-  void _showSnackBar(String message) {
+  void _showSnackBar(String message, Color? color) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Colors.green.shade600,
+        backgroundColor: color ?? Colors.green.shade600,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),

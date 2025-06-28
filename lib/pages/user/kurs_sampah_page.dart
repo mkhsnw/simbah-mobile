@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:simbah/models/waste_mode.dart';
+import 'package:simbah/services/transaction_service.dart';
 import 'package:simbah/services/waste_service.dart';
+import 'package:simbah/utils/exception_manager.dart';
 
 class KursSampahPage extends StatefulWidget {
   @override
@@ -12,19 +14,7 @@ class _KursSampahPageState extends State<KursSampahPage> {
   List<WasteData> _wasteData = [];
   bool _isLoading = true;
   String _errorMessage = '';
-
-  // Icon mapping untuk setiap jenis sampah
-  final Map<String, IconData> _wasteIcons = {
-    'botol plastik': Icons.local_drink,
-    'plastik': Icons.local_drink,
-    'kertas': Icons.description,
-    'kardus': Icons.inventory_2,
-    'kaleng': Icons.coffee,
-    'besi': Icons.build,
-    'kaca': Icons.wine_bar,
-    'aluminium': Icons.hardware,
-    'default': Icons.recycling,
-  };
+  bool _noDataFound = false; // Add flag for no data state
 
   @override
   void initState() {
@@ -36,44 +26,51 @@ class _KursSampahPageState extends State<KursSampahPage> {
     setState(() {
       _isLoading = true;
       _errorMessage = '';
+      _noDataFound = false;
     });
 
     try {
-      final wasteModel = await _wasteService.getWasteData();
+      final wasteModel = await _wasteService.getWasteData(context: context);
 
       if (wasteModel.success) {
         setState(() {
           _wasteData = wasteModel.data;
           _isLoading = false;
+          _noDataFound = wasteModel.data.isEmpty;
         });
       } else {
+        // Jika success false tapi tidak exception
         setState(() {
-          _errorMessage = wasteModel.message.isEmpty
-              ? 'Gagal memuat data kurs sampah'
-              : wasteModel.message;
+          _noDataFound = true;
+          _errorMessage = '';
           _isLoading = false;
+          _wasteData = [];
         });
       }
-    } catch (e) {
+    } on NoDataException catch (e) {
+      // Handle no data case
       setState(() {
-        _errorMessage = 'Terjadi kesalahan: $e';
+        _noDataFound = true;
+        _errorMessage = '';
         _isLoading = false;
+        _wasteData = [];
+      });
+    } on UnauthorizedException catch (e) {
+      // Handle unauthorized
+      setState(() {
+        _errorMessage = 'Sesi Anda telah berakhir. Silakan login kembali.';
+        _isLoading = false;
+        _noDataFound = false;
+      });
+    } catch (e) {
+      // Handle other errors
+      setState(() {
+        _errorMessage = 'Terjadi kesalahan: ${e.toString()}';
+        _isLoading = false;
+        _noDataFound = false;
       });
     }
   }
-
-  // IconData _getIconForWaste(String wasteName) {
-  //   final lowerName = wasteName.toLowerCase();
-
-  //   // Cari icon berdasarkan kata kunci dalam nama
-  //   for (String key in _wasteIcons.keys) {
-  //     if (lowerName.contains(key)) {
-  //       return _wasteIcons[key]!;
-  //     }
-  //   }
-
-  //   return _wasteIcons['default']!;
-  // }
 
   String _formatPrice(String price) {
     final priceInt = int.tryParse(price) ?? 0;
@@ -96,6 +93,7 @@ class _KursSampahPageState extends State<KursSampahPage> {
           IconButton(
             icon: Icon(Icons.refresh, color: Colors.white),
             onPressed: _loadWasteData,
+            tooltip: 'Refresh Data',
           ),
         ],
       ),
@@ -123,6 +121,8 @@ class _KursSampahPageState extends State<KursSampahPage> {
                   ? _buildLoadingWidget()
                   : _errorMessage.isNotEmpty
                   ? _buildErrorWidget()
+                  : _noDataFound || _wasteData.isEmpty
+                  ? _buildNoDataWidget()
                   : _buildWasteList(),
             ),
           ],
@@ -155,11 +155,23 @@ class _KursSampahPageState extends State<KursSampahPage> {
           Icon(Icons.error_outline, size: 64, color: Colors.red.shade400),
           SizedBox(height: 16),
           Text(
-            _errorMessage,
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+            'Gagal Memuat Data',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
           ),
-          SizedBox(height: 20),
+          SizedBox(height: 8),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              _errorMessage,
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey.shade600, fontSize: 14),
+            ),
+          ),
+          SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: _loadWasteData,
             icon: Icon(Icons.refresh),
@@ -178,31 +190,96 @@ class _KursSampahPageState extends State<KursSampahPage> {
     );
   }
 
-  Widget _buildWasteList() {
-    if (_wasteData.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.inbox_outlined, size: 64, color: Colors.grey.shade400),
-            SizedBox(height: 16),
-            Text(
-              'Belum ada data kurs sampah',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
+  Widget _buildNoDataWidget() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              shape: BoxShape.circle,
             ),
-          ],
-        ),
-      );
-    }
+            child: Icon(
+              Icons.inventory_2_outlined,
+              size: 64,
+              color: Colors.grey.shade400,
+            ),
+          ),
+          SizedBox(height: 24),
+          Text(
+            'Data Sampah Tidak Ditemukan',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade700,
+            ),
+          ),
+          SizedBox(height: 8),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 48),
+            child: Text(
+              'Belum ada data kurs sampah yang tersedia saat ini. Silakan coba lagi nanti atau hubungi admin.',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontSize: 14,
+                height: 1.5,
+              ),
+            ),
+          ),
+          SizedBox(height: 32),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              OutlinedButton.icon(
+                onPressed: _loadWasteData,
+                icon: Icon(Icons.refresh),
+                label: Text('Refresh'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: Colors.green.shade600,
+                  side: BorderSide(color: Colors.green.shade600),
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+              SizedBox(width: 16),
+              ElevatedButton.icon(
+                onPressed: () {
+                  // Option to contact admin or navigate somewhere
+                  _showContactAdminDialog();
+                },
+                icon: Icon(Icons.support_agent),
+                label: Text('Hubungi Admin'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green.shade600,
+                  foregroundColor: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 
+  Widget _buildWasteList() {
     return RefreshIndicator(
       onRefresh: _loadWasteData,
       color: Colors.green.shade600,
       child: ListView.builder(
+        physics:
+            AlwaysScrollableScrollPhysics(), // Allow pull to refresh even with few items
         itemCount: _wasteData.length,
         itemBuilder: (context, index) {
           final item = _wasteData[index];
-          // final icon = _getIconForWaste(item.name);
 
           return Container(
             margin: EdgeInsets.only(bottom: 12),
@@ -247,7 +324,7 @@ class _KursSampahPageState extends State<KursSampahPage> {
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Per kg',
+                        'Per kilogram',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey.shade500,
@@ -280,6 +357,52 @@ class _KursSampahPageState extends State<KursSampahPage> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void _showContactAdminDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.support_agent, color: Colors.green.shade600),
+            SizedBox(width: 8),
+            Text('Hubungi Admin'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Jika Anda membutuhkan bantuan atau informasi lebih lanjut tentang kurs sampah, silakan hubungi admin melalui:',
+            ),
+            SizedBox(height: 16),
+            Row(
+              children: [
+                Icon(Icons.email, color: Colors.grey.shade600, size: 20),
+                SizedBox(width: 8),
+                Text('admin@simbah.com'),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.phone, color: Colors.grey.shade600, size: 20),
+                SizedBox(width: 8),
+                Text('+62 123 456 789'),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text('Tutup'),
+          ),
+        ],
       ),
     );
   }

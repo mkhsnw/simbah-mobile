@@ -17,7 +17,7 @@ class UserService {
         throw Exception('Token tidak ditemukan');
       }
       final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}/auth/me'),
+        Uri.parse('${ApiConfig.baseUrl}s/auth/me'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
