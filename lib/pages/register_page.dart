@@ -15,6 +15,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false; // ✅ Add loading state
 
   @override
   void dispose() {
@@ -24,6 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
     super.dispose();
   }
 
+  // ✅ Update Handle Register dengan Loading State
   void _handleRegister() async {
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
@@ -33,6 +35,12 @@ class _RegisterPageState extends State<RegisterPage> {
       _showSnackBar('Semua field harus diisi', Colors.red.shade600);
       return;
     }
+
+    // ✅ Set loading state
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       final response = await AuthService().register(
         email,
@@ -66,6 +74,13 @@ class _RegisterPageState extends State<RegisterPage> {
           ' saat registrasi: ${e.toString()}',
           Colors.red.shade600,
         );
+      }
+    } finally {
+      // ✅ Reset loading state
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
@@ -152,43 +167,79 @@ class _RegisterPageState extends State<RegisterPage> {
                         _buildPasswordField(),
                         const SizedBox(height: 32),
 
-                        // Register Button
+                        // ✅ Register Button dengan Loading State
                         ElevatedButton(
-                          onPressed: _handleRegister,
+                          onPressed: _isLoading
+                              ? null
+                              : _handleRegister, // Disable saat loading
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green.shade600,
+                            backgroundColor: _isLoading
+                                ? Colors.grey.shade400
+                                : Colors.green.shade600,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12),
                             ),
+                            elevation: _isLoading ? 0 : 2,
                           ),
-                          child: const Text(
-                            'Daftar',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                          child: _isLoading
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                            AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    const Text(
+                                      'Mendaftar...',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const Text(
+                                  'Daftar',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
                         ),
                         const SizedBox(height: 24),
 
-                        // Login Link
+                        // ✅ Login Link dengan Loading State
                         Center(
                           child: TextButton(
-                            onPressed: () => context.pop(),
+                            onPressed: _isLoading
+                                ? null
+                                : () => context.pop(), // Disable saat loading
                             child: RichText(
                               text: TextSpan(
                                 text: 'Sudah punya akun? ',
                                 style: TextStyle(
-                                  color: Colors.grey.shade600,
+                                  color: _isLoading
+                                      ? Colors.grey.shade400
+                                      : Colors.grey.shade600,
                                   fontSize: 14,
                                 ),
                                 children: [
                                   TextSpan(
                                     text: 'Masuk',
                                     style: TextStyle(
-                                      color: Colors.green.shade600,
+                                      color: _isLoading
+                                          ? Colors.grey.shade400
+                                          : Colors.green.shade600,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -231,6 +282,7 @@ class _RegisterPageState extends State<RegisterPage> {
         TextField(
           controller: controller,
           keyboardType: keyboardType,
+          enabled: !_isLoading, // ✅ Disable saat loading
           decoration: _inputDecoration(hint, icon),
         ),
       ],
@@ -253,6 +305,7 @@ class _RegisterPageState extends State<RegisterPage> {
         TextField(
           controller: _passwordController,
           obscureText: _obscurePassword,
+          enabled: !_isLoading, // ✅ Disable saat loading
           decoration: _inputDecoration('Masukkan password', Icons.lock_outline)
               .copyWith(
                 suffixIcon: IconButton(
@@ -262,11 +315,14 @@ class _RegisterPageState extends State<RegisterPage> {
                         : Icons.visibility_outlined,
                     color: Colors.grey.shade500,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          // ✅ Disable saat loading
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
                 ),
               ),
         ),
@@ -279,7 +335,9 @@ class _RegisterPageState extends State<RegisterPage> {
       hintText: hintText,
       prefixIcon: Icon(icon, color: Colors.grey.shade500),
       filled: true,
-      fillColor: Colors.grey.shade50,
+      fillColor: _isLoading
+          ? Colors.grey.shade100
+          : Colors.grey.shade50, // ✅ Visual feedback saat loading
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: Colors.grey.shade300),
@@ -291,6 +349,10 @@ class _RegisterPageState extends State<RegisterPage> {
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: Colors.green.shade400, width: 2),
+      ),
+      disabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(color: Colors.grey.shade200),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
     );

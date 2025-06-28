@@ -312,45 +312,6 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
 
           SizedBox(height: 24),
 
-          // Visual Bar Chart Alternative (Custom)
-          Container(
-            padding: EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.bar_chart, color: Colors.green.shade600),
-                    SizedBox(width: 8),
-                    Text(
-                      'Grafik Transaksi Bulanan $_selectedYear',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade800,
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                // _buildCustomBarChart(),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 24),
-
           // Top Performing Months
           Container(
             padding: EdgeInsets.all(16),

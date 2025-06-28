@@ -1483,7 +1483,7 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
 
                       try {
                         if (selectedType == 'DEPOSIT') {
-                          await editTransactionDeposit(
+                          await _transactionService.editTransactionDeposit(
                             selectedUserId!,
                             descriptionController.text.trim(),
                             [
@@ -1519,7 +1519,7 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
                             return;
                           }
 
-                          await editTransactionWithdraw(
+                          await _transactionService.editTransactionWithdraw(
                             selectedUserId!,
                             amount,
                             descriptionController.text.trim(),
@@ -1567,7 +1567,7 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
   void _deleteTransaction(String id) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (BuildContext dialogContext) => AlertDialog(
         title: Row(
           children: [
             Icon(Icons.warning_amber_outlined, color: Colors.red),
@@ -1593,43 +1593,34 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.of(dialogContext).pop(),
             child: Text('Batal'),
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.pop(context); // Close dialog first
+              // Close confirmation dialog first
+              Navigator.of(dialogContext).pop();
 
-              // Show loading indicator
-              showDialog(
-                context: context,
-                barrierDismissible: false,
-                builder: (context) => Center(
-                  child: Container(
-                    padding: EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircularProgressIndicator(),
-                        SizedBox(height: 16),
-                        Text('Menghapus transaksi...'),
-                      ],
-                    ),
-                  ),
-                ),
-              );
+              // Show loading overlay
+              _showDeleteLoadingDialog();
 
               try {
-                await deleteTransaction(id);
-                Navigator.pop(context); // Close loading dialog
+                // FIX: Use proper service method call
+                await _transactionService.deleteTransaction(id);
+
+                // Close loading dialog
+                _hideLoadingDialog();
+
+                // Show success and refresh
                 _showSnackBar('Transaksi berhasil dihapus', Colors.green);
-                _loadTransactions(); // Refresh data
+                await _loadTransactions();
               } catch (e) {
-                Navigator.pop(context); // Close loading dialog
+                print('Delete transaction error: $e');
+
+                // Close loading dialog
+                _hideLoadingDialog();
+
+                // Show error
                 _showSnackBar(
                   'Gagal menghapus transaksi: ${e.toString()}',
                   Colors.red,
@@ -1642,6 +1633,48 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
         ],
       ),
     );
+  }
+
+  // Helper methods for loading dialog
+  bool _isShowingLoadingDialog = false;
+
+  void _showDeleteLoadingDialog() {
+    if (_isShowingLoadingDialog) return;
+
+    _isShowingLoadingDialog = true;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => WillPopScope(
+        onWillPop: () async => false,
+        child: Dialog(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    Colors.green.shade600,
+                  ),
+                ),
+                SizedBox(width: 20),
+                Text('Menghapus transaksi...'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _hideLoadingDialog() {
+    if (!_isShowingLoadingDialog) return;
+
+    _isShowingLoadingDialog = false;
+    if (mounted && Navigator.canPop(context)) {
+      Navigator.pop(context);
+    }
   }
 
   void _showExportMessage() {

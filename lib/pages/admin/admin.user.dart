@@ -614,10 +614,11 @@ class _AdminUserPageState extends State<AdminUserPage> {
               onPressed: isLoading
                   ? null
                   : () async {
+                      // FIX: Pass user.id instead of rekeningController.text
                       if (_validateEditForm(
                         nameController.text,
                         emailController.text,
-                        rekeningController.text,
+                        user.id, // ✅ Use user.id, not rekeningController.text
                       )) {
                         setDialogState(() {
                           isLoading = true;

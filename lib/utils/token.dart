@@ -7,6 +7,9 @@ class AuthManager {
   factory AuthManager() => _instance;
   AuthManager._internal();
 
+  static const String _tokenKey = 'auth_token';
+  static const String _userRoleKey = 'user_role';
+
   // Method untuk handle unauthorized dengan context manual
   static Future<void> handleUnauthorized(BuildContext context) async {
     // Hapus token
@@ -61,5 +64,29 @@ class AuthManager {
   static Future<bool> isLoggedIn() async {
     final token = await getToken();
     return token != null && token.isNotEmpty;
+  }
+
+  // ✅ Save user role for faster access
+  static Future<void> saveUserRole(String role) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_userRoleKey, role);
+  }
+
+  // ✅ Get user role
+  static Future<String?> getUserRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_userRoleKey);
+  }
+
+  // ✅ Get complete auth status
+  static Future<Map<String, dynamic>> getAuthStatus() async {
+    final token = await getToken();
+    final role = await getUserRole();
+
+    return {
+      'isLoggedIn': token != null && token.isNotEmpty,
+      'token': token,
+      'role': role,
+    };
   }
 }

@@ -206,115 +206,120 @@ class TransactionService {
       throw Exception('Terjadi kesalahan saat memuat data laporan: $e');
     }
   }
-}
 
-Future<dynamic> editTransactionDeposit(
-  String userId,
-  String description,
-  List<Map<String, dynamic>> items,
-  String transactionId,
-) async {
-  try {
-    final token = await AuthManager.getToken();
-    if (token == null) {
-      throw UnauthorizedException('Token tidak ditemukan');
-    }
-    final response = await http.put(
-      Uri.parse('${ApiConfig.baseUrl}/transaction/$transactionId'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode({
-        'userId': userId,
-        'description': description,
-        'items': items,
-      }),
-    );
-    print('Edit Transaction Response Code: ${response.statusCode}');
-    print('Edit Transaction Response Body: ${response.body}');
+  Future<dynamic> editTransactionDeposit(
+    String userId,
+    String description,
+    List<Map<String, dynamic>> items,
+    String transactionId,
+  ) async {
+    try {
+      final token = await AuthManager.getToken();
+      if (token == null) {
+        throw UnauthorizedException('Token tidak ditemukan');
+      }
+      final response = await http.put(
+        Uri.parse('${ApiConfig.baseUrl}/transaction/$transactionId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'userId': userId,
+          'description': description,
+          'items': items,
+        }),
+      );
+      print('Edit Transaction Response Code: ${response.statusCode}');
+      print('Edit Transaction Response Body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else if (response.statusCode == 401) {
-      throw UnauthorizedException('Unauthorized access. Please login again.');
-    } else {
-      throw Exception('Failed to edit transaction: ${response.reasonPhrase}');
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else if (response.statusCode == 401) {
+        throw UnauthorizedException('Unauthorized access. Please login again.');
+      } else {
+        throw Exception('Failed to edit transaction: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('Terjadi kesalahan saat mengedit transaksi');
     }
-  } catch (e) {
-    print('Error: $e');
-    throw Exception('Terjadi kesalahan saat mengedit transaksi');
   }
-}
 
-Future<dynamic> editTransactionWithdraw(
-  String userId,
-  int amount,
-  String description,
-  String transactionId,
-) async {
-  try {
-    final token = await AuthManager.getToken();
-    if (token == null) {
-      throw UnauthorizedException('Token tidak ditemukan');
-    }
-    final response = await http.put(
-      Uri.parse('${ApiConfig.baseUrl}/transaction/$transactionId'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: json.encode({
-        'userId': userId,
-        'totalAmount': amount,
-        'description': description,
-      }),
-    );
-    print('Edit Transaction Response Code: ${response.statusCode}');
-    print('Edit Transaction Response Body: ${response.body}');
+  Future<dynamic> editTransactionWithdraw(
+    String userId,
+    int amount,
+    String description,
+    String transactionId,
+  ) async {
+    try {
+      final token = await AuthManager.getToken();
+      if (token == null) {
+        throw UnauthorizedException('Token tidak ditemukan');
+      }
+      final response = await http.put(
+        Uri.parse('${ApiConfig.baseUrl}/transaction/$transactionId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'userId': userId,
+          'totalAmount': amount,
+          'description': description,
+        }),
+      );
+      print('Edit Transaction Response Code: ${response.statusCode}');
+      print('Edit Transaction Response Body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else if (response.statusCode == 401) {
-      throw UnauthorizedException('Unauthorized access. Please login again.');
-    } else {
-      throw Exception('Failed to edit transaction: ${response.reasonPhrase}');
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else if (response.statusCode == 401) {
+        throw UnauthorizedException('Unauthorized access. Please login again.');
+      } else {
+        throw Exception('Failed to edit transaction: ${response.reasonPhrase}');
+      }
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('Terjadi kesalahan saat mengedit transaksi');
     }
-  } catch (e) {
-    print('Error: $e');
-    throw Exception('Terjadi kesalahan saat mengedit transaksi');
   }
-}
 
-Future<dynamic> deleteTransaction(String transactionId) async {
-  try {
-    final token = await AuthManager.getToken();
-    if (token == null) {
-      throw UnauthorizedException('Token tidak ditemukan');
-    }
-    final response = await http.delete(
-      Uri.parse('${ApiConfig.baseUrl}/transaction/$transactionId'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-    );
-    print('Delete Transaction Response Code: ${response.statusCode}');
-    print('Delete Transaction Response Body: ${response.body}');
+  Future<dynamic> deleteTransaction(
+    String transactionId, {
+    BuildContext? context,
+  }) async {
+    try {
+      final token = await AuthManager.getToken();
+      if (token == null) {
+        throw UnauthorizedException('Token tidak ditemukan');
+      }
+      final response = await http.delete(
+        Uri.parse('${ApiConfig.baseUrl}/transaction/$transactionId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print('Delete Transaction Response Code: ${response.statusCode}');
+      print('Delete Transaction Response Body: ${response.body}');
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else if (response.statusCode == 401) {
-      throw UnauthorizedException('Unauthorized access. Please login again.');
-    } else {
-      throw Exception('Failed to delete transaction: ${response.reasonPhrase}');
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else if (response.statusCode == 401) {
+        throw UnauthorizedException('Unauthorized access. Please login again.');
+      } else {
+        throw Exception(
+          'Failed to delete transaction: ${response.reasonPhrase}',
+        );
+      }
+    } catch (e) {
+      print('Error: $e');
+      throw Exception('Terjadi kesalahan saat menghapus transaksi');
     }
-  } catch (e) {
-    print('Error: $e');
-    throw Exception('Terjadi kesalahan saat menghapus transaksi');
   }
 }
 

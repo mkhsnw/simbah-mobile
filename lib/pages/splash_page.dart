@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:simbah/services/user_service.dart';
+import 'package:simbah/utils/token.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -15,11 +17,53 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
     // Navigasi ke halaman login setelah 3 detik
     Timer(const Duration(seconds: 3), () {
-      // Menggunakan go_router untuk navigasi agar riwayat navigasi bersih
+      _checkAuthAndRedirect();
+    });
+  }
+
+  Future<void> _checkAuthAndRedirect() async {
+    // Show splash for at least 2 seconds
+    await Future.delayed(Duration(seconds: 2));
+    
+    try {
+      final token = await AuthManager.getToken();
+      
+      if (token == null || token.isEmpty) {
+        // No token, go to login
+        if (mounted) {
+          context.go('/login');
+        }
+        return;
+      }
+      
+      // Validate token and get user info
+      final userService = UserService();
+      final response = await userService.getUserInfo();
+      
+      if (response.success && response.data != null) {
+        // Token valid, redirect based on role
+        if (mounted) {
+          if (response.data!.role == 'ADMIN') {
+            context.go('/admin/dashboard');
+          } else {
+            context.go('/home');
+          }
+        }
+      } else {
+        // Token invalid, clear and go to login
+        await AuthManager.clearToken();
+        if (mounted) {
+          context.go('/login');
+        }
+      }
+    } catch (e) {
+      print('Splash auth check error: $e');
+      // Error occurred, clear token and go to login
+      await AuthManager.clearToken();
       if (mounted) {
         context.go('/login');
       }
-    });
+    }
   }
 
   @override
