@@ -620,24 +620,62 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
         ),
         SizedBox(height: 20),
 
-        // Balance
-        Text(
-          'Saldo Anda',
-          style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
-        ),
-        SizedBox(height: 4),
-        Text(
-          _userData?.formattedBalance ?? 'Rp 0',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        SizedBox(height: 4),
-        Text(
-          'Bank Sampah',
-          style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
+        // ✅ Balance Section with Navigation Button
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Saldo Anda',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.9),
+                      fontSize: 14,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    _userData?.formattedBalance ?? 'Rp 0',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Bank Sampah',
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(width: 16),
+
+            // ✅ Navigate to Withdraw Page Button
+            ElevatedButton.icon(
+              onPressed: () {
+                // Navigate to withdraw page
+                context.push('/withdraw');
+              },
+              icon: Icon(Icons.account_balance_wallet, size: 18),
+              label: Text('Withdraw'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.green.shade600,
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                elevation: 2,
+              ),
+            ),
+          ],
         ),
       ],
     );

@@ -1,3 +1,5 @@
+// lib/pages/admin/admin_dashboard_page.dart
+// filepath: d:\Coding\Freelance\simbah\lib\pages\admin\admin_dashboard_page.dart
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:simbah/utils/auth_manager.dart';
@@ -65,6 +67,15 @@ class AdminDashboardPage extends StatelessWidget {
                     Icons.people,
                     Colors.purple,
                     '/admin/users',
+                  ),
+                  // ✅ Menu Baru untuk Withdraw Request
+                  _buildMenuCard(
+                    context,
+                    'Request Penarikan',
+                    'Kelola permintaan penarikan',
+                    Icons.account_balance_wallet,
+                    Colors.teal,
+                    '/admin/withdraw-requests',
                   ),
                   _buildMenuCard(
                     context,

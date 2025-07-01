@@ -17,7 +17,7 @@ class UserService {
         throw Exception('Token tidak ditemukan');
       }
       final response = await http.get(
-        Uri.parse('${ApiConfig.baseUrl}s/auth/me'),
+        Uri.parse('${ApiConfig.baseUrl}/auth/me'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
@@ -157,6 +157,47 @@ class UserService {
         message: 'Terjadi kesalahan saat mengambil daftar user: $e',
         data: [],
       );
+    }
+  }
+
+  Future<UserResponse> getUserById(String id, {BuildContext? context}) async {
+    try {
+      final token = await AuthManager.getToken();
+      if (token == null) {
+        if (context != null) {
+          await AuthManager.handleUnauthorized(context);
+        }
+        throw Exception('Token tidak ditemukan');
+      }
+
+      final response = await http.get(
+        Uri.parse('${ApiConfig.baseUrl}/user/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      print('Get User By ID Response Code: ${response.statusCode}');
+      print('Get User By ID Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return UserResponse.fromJson(data);
+      } else if (response.statusCode == 401) {
+        if (context != null) {
+          await AuthManager.handleUnauthorized(context);
+        }
+        throw UnauthorizedException('Unauthorized access. Please login again.');
+      } else {
+        return UserResponse.error(
+          'Gagal mengambil data user: ${response.reasonPhrase}',
+        );
+      }
+    } catch (e) {
+      print('Error getting user by ID: $e');
+      return UserResponse.error('Terjadi kesalahan jaringan: $e');
     }
   }
 }

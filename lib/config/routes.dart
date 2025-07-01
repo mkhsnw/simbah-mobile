@@ -5,10 +5,12 @@ import 'package:simbah/pages/admin/admin_dashboard_page.dart';
 import 'package:simbah/pages/admin/admin_laporan.dart';
 import 'package:simbah/pages/admin/admin_transaction_page.dart';
 import 'package:simbah/pages/admin/admin_waste.dart';
+import 'package:simbah/pages/admin/admin_withdraw_request_page.dart';
 import 'package:simbah/pages/login_page.dart';
 import 'package:simbah/pages/register_page.dart';
 import 'package:simbah/pages/splash_page.dart';
 import 'package:simbah/pages/user/home_page.dart';
+import 'package:simbah/pages/user/withdraw_page.dart';
 import 'package:simbah/services/user_service.dart';
 import 'package:simbah/utils/token.dart';
 
@@ -23,6 +25,11 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const RegisterPage(),
     ),
     GoRoute(path: '/home', builder: (context, state) => DashboardPage()),
+    GoRoute(path: '/withdraw', builder: (context, state) => WithdrawPage()),
+    GoRoute(
+      path: '/admin/withdraw-requests',
+      builder: (context, state) => AdminWithdrawRequestsPage(),
+    ),
     GoRoute(
       path: '/admin/dashboard',
       builder: (context, state) => AdminDashboardPage(),

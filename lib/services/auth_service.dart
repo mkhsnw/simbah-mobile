@@ -9,7 +9,7 @@ class AuthService {
   Future<LoginModel> login(String email, String password) async {
     try {
       final response = await http.post(
-        Uri.parse('${ApiConfig.baseUrl}s/auth/login'),
+        Uri.parse('${ApiConfig.baseUrl}/auth/login'),
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
