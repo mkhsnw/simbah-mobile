@@ -28,8 +28,7 @@ class WithdrawRequestService {
 
       if (response.statusCode == 201) {
         final dataDecode = json.decode(response.body);
-        final data = WithdrawModel.fromJson(dataDecode);
-        return data;
+        return dataDecode;
       } else if (response.statusCode == 401) {
         throw UnauthorizedException('Unauthorized access. Please login again.');
       } else {
