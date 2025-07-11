@@ -42,26 +42,15 @@ class _RegisterPageState extends State<RegisterPage> {
     });
 
     try {
-      final response = await AuthService().register(
-        email,
-        password,
-        name,
-        "USER",
-      );
+      final response = await AuthService().register(email, password, name, "USER");
 
       if (response.status) {
-        _showSnackBar(
-          'Registrasi berhasil! Silakan masuk.',
-          Colors.green.shade600,
-        );
+        _showSnackBar('Registrasi berhasil! Silakan masuk.', Colors.green.shade600);
         if (mounted) {
           context.go('/login');
         }
       } else {
-        _showSnackBar(
-          'Registrasi gagal: ${response.message}',
-          Colors.red.shade600,
-        );
+        _showSnackBar('Registrasi gagal: ${response.message}', Colors.red.shade600);
       }
     } on AuthException catch (e) {
       if (mounted) {
@@ -119,11 +108,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     margin: const EdgeInsets.only(bottom: 48.0),
                     child: Text(
                       'Buat Akun Baru',
-                      style: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade700,
-                      ),
+                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: Colors.green.shade700),
                     ),
                   ),
 
@@ -134,11 +119,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: const Offset(0, 10),
-                        ),
+                        BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, 10)),
                       ],
                     ),
                     child: Column(
@@ -156,9 +137,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         // Email Field
                         _buildTextField(
                           controller: _emailController,
-                          label: 'Email',
-                          hint: 'Masukkan email',
-                          icon: Icons.email_outlined,
+                          label: 'Username',
+                          hint: 'Masukkan username',
+                          icon: Icons.person,
                           keyboardType: TextInputType.emailAddress,
                         ),
                         const SizedBox(height: 24),
@@ -169,18 +150,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
                         // ✅ Register Button dengan Loading State
                         ElevatedButton(
-                          onPressed: _isLoading
-                              ? null
-                              : _handleRegister, // Disable saat loading
+                          onPressed: _isLoading ? null : _handleRegister, // Disable saat loading
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _isLoading
-                                ? Colors.grey.shade400
-                                : Colors.green.shade600,
+                            backgroundColor: _isLoading ? Colors.grey.shade400 : Colors.green.shade600,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             elevation: _isLoading ? 0 : 2,
                           ),
                           child: _isLoading
@@ -192,54 +167,33 @@ class _RegisterPageState extends State<RegisterPage> {
                                       height: 20,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              Colors.white,
-                                            ),
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                       ),
                                     ),
                                     const SizedBox(width: 12),
-                                    const Text(
-                                      'Mendaftar...',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                                    const Text('Mendaftar...', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                                   ],
                                 )
-                              : const Text(
-                                  'Daftar',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                              : const Text('Daftar', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                         ),
                         const SizedBox(height: 24),
 
                         // ✅ Login Link dengan Loading State
                         Center(
                           child: TextButton(
-                            onPressed: _isLoading
-                                ? null
-                                : () => context.pop(), // Disable saat loading
+                            onPressed: _isLoading ? null : () => context.pop(), // Disable saat loading
                             child: RichText(
                               text: TextSpan(
                                 text: 'Sudah punya akun? ',
                                 style: TextStyle(
-                                  color: _isLoading
-                                      ? Colors.grey.shade400
-                                      : Colors.grey.shade600,
+                                  color: _isLoading ? Colors.grey.shade400 : Colors.grey.shade600,
                                   fontSize: 14,
                                 ),
                                 children: [
                                   TextSpan(
                                     text: 'Masuk',
                                     style: TextStyle(
-                                      color: _isLoading
-                                          ? Colors.grey.shade400
-                                          : Colors.green.shade600,
+                                      color: _isLoading ? Colors.grey.shade400 : Colors.green.shade600,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -272,11 +226,7 @@ class _RegisterPageState extends State<RegisterPage> {
       children: [
         Text(
           label,
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
         ),
         const SizedBox(height: 8),
         TextField(
@@ -295,36 +245,29 @@ class _RegisterPageState extends State<RegisterPage> {
       children: [
         Text(
           'Password',
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            color: Colors.grey.shade700,
-          ),
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
         ),
         const SizedBox(height: 8),
         TextField(
           controller: _passwordController,
           obscureText: _obscurePassword,
           enabled: !_isLoading, // ✅ Disable saat loading
-          decoration: _inputDecoration('Masukkan password', Icons.lock_outline)
-              .copyWith(
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined,
-                    color: Colors.grey.shade500,
-                  ),
-                  onPressed: _isLoading
-                      ? null
-                      : () {
-                          // ✅ Disable saat loading
-                          setState(() {
-                            _obscurePassword = !_obscurePassword;
-                          });
-                        },
-                ),
+          decoration: _inputDecoration('Masukkan password', Icons.lock_outline).copyWith(
+            suffixIcon: IconButton(
+              icon: Icon(
+                _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                color: Colors.grey.shade500,
               ),
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      // ✅ Disable saat loading
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
+            ),
+          ),
         ),
       ],
     );
@@ -335,9 +278,7 @@ class _RegisterPageState extends State<RegisterPage> {
       hintText: hintText,
       prefixIcon: Icon(icon, color: Colors.grey.shade500),
       filled: true,
-      fillColor: _isLoading
-          ? Colors.grey.shade100
-          : Colors.grey.shade50, // ✅ Visual feedback saat loading
+      fillColor: _isLoading ? Colors.grey.shade100 : Colors.grey.shade50, // ✅ Visual feedback saat loading
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: Colors.grey.shade300),

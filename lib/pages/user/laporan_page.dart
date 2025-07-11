@@ -35,13 +35,12 @@ class _LaporanPageState extends State<LaporanPage> {
         });
       } else {
         setState(() {
-          _errorMessage = reportModel.message.isEmpty
-              ? 'Gagal memuat data laporan'
-              : reportModel.message;
+          _errorMessage = reportModel.message.isEmpty ? 'Gagal memuat data laporan' : reportModel.message;
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } catch (e, s) {
+      print(s);
       setState(() {
         _errorMessage = 'Terjadi kesalahan: $e';
         _isLoading = false;
@@ -102,20 +101,11 @@ class _LaporanPageState extends State<LaporanPage> {
           children: [
             Text(
               'Laporan Bulanan',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey.shade800,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey.shade800),
             ),
             SizedBox(height: 4),
-            Text(
-              _getCurrentMonthYear(),
-              style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-            ),
+            Text(_getCurrentMonthYear(), style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
             SizedBox(height: 20),
-
-            // Content berdasarkan state
             Expanded(
               child: _isLoading
                   ? _buildLoadingWidget()
@@ -136,10 +126,7 @@ class _LaporanPageState extends State<LaporanPage> {
         children: [
           CircularProgressIndicator(color: Colors.green.shade600),
           SizedBox(height: 16),
-          Text(
-            'Memuat data laporan...',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
-          ),
+          Text('Memuat data laporan...', style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
         ],
       ),
     );
@@ -166,9 +153,7 @@ class _LaporanPageState extends State<LaporanPage> {
               backgroundColor: Colors.green.shade600,
               foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
           ),
         ],
@@ -184,10 +169,7 @@ class _LaporanPageState extends State<LaporanPage> {
           children: [
             Icon(Icons.inbox_outlined, size: 64, color: Colors.grey.shade400),
             SizedBox(height: 16),
-            Text(
-              'Data laporan tidak tersedia',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
-            ),
+            Text('Data laporan tidak tersedia', style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ],
         ),
       );
@@ -271,88 +253,54 @@ class _LaporanPageState extends State<LaporanPage> {
           SizedBox(height: 24),
 
           // Chart placeholder
-          Container(
-            height: 200,
-            padding: EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Grafik Setoran Sampah',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.grey.shade800,
-                  ),
-                ),
-                SizedBox(height: 20),
-                Expanded(
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.bar_chart,
-                          size: 48,
-                          color: Colors.grey.shade400,
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          'Grafik akan ditampilkan di sini',
-                          style: TextStyle(
-                            color: Colors.grey.shade500,
-                            fontSize: 14,
-                          ),
-                        ),
-                        SizedBox(height: 4),
-                        Text(
-                          'Total ${_reportData!.depositCount} setoran dan ${_reportData!.withdrawalCount} penarikan',
-                          style: TextStyle(
-                            color: Colors.grey.shade400,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          // Container(
+          //   height: 200,
+          //   padding: EdgeInsets.all(20),
+          //   decoration: BoxDecoration(
+          //     color: Colors.white,
+          //     borderRadius: BorderRadius.circular(12),
+          //     boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
+          //   ),
+          //   child: Column(
+          //     crossAxisAlignment: CrossAxisAlignment.start,
+          //     children: [
+          //       Text(
+          //         'Grafik Setoran Sampah',
+          //         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade800),
+          //       ),
+          //       SizedBox(height: 20),
+          //       Expanded(
+          //         child: Center(
+          //           child: Column(
+          //             mainAxisAlignment: MainAxisAlignment.center,
+          //             children: [
+          //               Icon(Icons.bar_chart, size: 48, color: Colors.grey.shade400),
+          //               SizedBox(height: 8),
+          //               Text('Grafik akan ditampilkan di sini', style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+          //               SizedBox(height: 4),
+          //               Text(
+          //                 'Total ${_reportData!.depositCount} setoran dan ${_reportData!.withdrawalCount} penarikan',
+          //                 style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // ),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildSummaryCard(String title, String value, IconData icon, Color color) {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,27 +310,17 @@ class _LaporanPageState extends State<LaporanPage> {
             children: [
               Container(
                 padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
                 child: Icon(icon, color: color, size: 20),
               ),
             ],
           ),
           SizedBox(height: 12),
-          Text(
-            title,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-          ),
+          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
           SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
-            ),
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey.shade800),
           ),
         ],
       ),

@@ -40,9 +40,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
         });
       } else {
         setState(() {
-          _errorMessage = response.message.isEmpty
-              ? 'Gagal memuat data user'
-              : response.message;
+          _errorMessage = response.message.isEmpty ? 'Gagal memuat data user' : response.message;
           _isLoading = false;
         });
       }
@@ -96,10 +94,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
           children: [
             CircularProgressIndicator(color: Colors.green.shade600),
             SizedBox(height: 16),
-            Text(
-              'Memuat data user...',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
-            ),
+            Text('Memuat data user...', style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ],
         ),
       );
@@ -159,17 +154,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
           SizedBox(height: 16),
           Text(
             'Belum ada user terdaftar',
-            style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w500,
-            ),
+            style: TextStyle(fontSize: 18, color: Colors.grey.shade600, fontWeight: FontWeight.w500),
           ),
           SizedBox(height: 8),
-          Text(
-            'Tambahkan user pertama Anda',
-            style: TextStyle(color: Colors.grey.shade500, fontSize: 14),
-          ),
+          Text('Tambahkan user pertama Anda', style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
           SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: _showAddUserDialog,
@@ -193,13 +181,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,16 +189,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
           Row(
             children: [
               CircleAvatar(
-                backgroundColor: user.role == 'ADMIN'
-                    ? Colors.purple.shade100
-                    : Colors.green.shade100,
+                backgroundColor: user.role == 'ADMIN' ? Colors.purple.shade100 : Colors.green.shade100,
                 child: Icon(
-                  user.role == 'ADMIN'
-                      ? Icons.admin_panel_settings
-                      : Icons.person,
-                  color: user.role == 'ADMIN'
-                      ? Colors.purple.shade600
-                      : Colors.green.shade600,
+                  user.role == 'ADMIN' ? Icons.admin_panel_settings : Icons.person,
+                  color: user.role == 'ADMIN' ? Colors.purple.shade600 : Colors.green.shade600,
                 ),
               ),
               SizedBox(width: 12),
@@ -229,31 +205,20 @@ class _AdminUserPageState extends State<AdminUserPage> {
                         Expanded(
                           child: Text(
                             user.name,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey.shade800,
-                            ),
+                            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade800),
                           ),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 2,
-                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                           decoration: BoxDecoration(
-                            color: user.role == 'ADMIN'
-                                ? Colors.purple.shade100
-                                : Colors.blue.shade100,
+                            color: user.role == 'ADMIN' ? Colors.purple.shade100 : Colors.blue.shade100,
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
                             user.role,
                             style: TextStyle(
                               fontSize: 10,
-                              color: user.role == 'ADMIN'
-                                  ? Colors.purple.shade700
-                                  : Colors.blue.shade700,
+                              color: user.role == 'ADMIN' ? Colors.purple.shade700 : Colors.blue.shade700,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -261,13 +226,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
                       ],
                     ),
                     SizedBox(height: 2),
-                    Text(
-                      user.email,
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey.shade600,
-                      ),
-                    ),
+                    Text(user.email, style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
                   ],
                 ),
               ),
@@ -280,20 +239,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Saldo',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
+                    Text('Saldo', style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
                     Text(
                       user.formattedBalance,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.green.shade600,
-                      ),
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.green.shade600),
                     ),
                   ],
                 ),
@@ -302,20 +251,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'No. Rekening',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade500,
-                      ),
-                    ),
+                    Text('No. Nasabah', style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
                     Text(
                       user.rekening,
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade700,
-                      ),
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
                     ),
                   ],
                 ),
@@ -404,11 +343,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
                       border: OutlineInputBorder(),
                       prefixIcon: Icon(Icons.lock),
                       suffixIcon: IconButton(
-                        icon: Icon(
-                          isPasswordVisible
-                              ? Icons.visibility
-                              : Icons.visibility_off,
-                        ),
+                        icon: Icon(isPasswordVisible ? Icons.visibility : Icons.visibility_off),
                         onPressed: () {
                           setDialogState(() {
                             isPasswordVisible = !isPasswordVisible;
@@ -432,13 +367,9 @@ class _AdminUserPageState extends State<AdminUserPage> {
                         child: Row(
                           children: [
                             Icon(
-                              role == UserRole.ADMIN
-                                  ? Icons.admin_panel_settings
-                                  : Icons.person,
+                              role == UserRole.ADMIN ? Icons.admin_panel_settings : Icons.person,
                               size: 16,
-                              color: role == UserRole.ADMIN
-                                  ? Colors.purple.shade600
-                                  : Colors.blue.shade600,
+                              color: role == UserRole.ADMIN ? Colors.purple.shade600 : Colors.blue.shade600,
                             ),
                             SizedBox(width: 8),
                             Text(role.name),
@@ -457,10 +388,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: isLoading ? null : () => Navigator.pop(context),
-              child: Text('Batal'),
-            ),
+            TextButton(onPressed: isLoading ? null : () => Navigator.pop(context), child: Text('Batal')),
             ElevatedButton(
               onPressed: isLoading
                   ? null
@@ -485,16 +413,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                           );
 
                           Navigator.pop(context);
-                          _showSnackBar(
-                            'User berhasil ditambahkan',
-                            Colors.green,
-                          );
+                          _showSnackBar('User berhasil ditambahkan', Colors.green);
                           _loadUsers();
                         } catch (e) {
-                          _showSnackBar(
-                            'Gagal menambahkan user: ${e.toString()}',
-                            Colors.red,
-                          );
+                          _showSnackBar('Gagal menambahkan user: ${e.toString()}', Colors.red);
                         } finally {
                           setDialogState(() {
                             isLoading = false;
@@ -502,9 +424,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
                         }
                       }
                     },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green.shade600,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade600),
               child: isLoading
                   ? SizedBox(
                       width: 20,
@@ -526,10 +446,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
     final nameController = TextEditingController(text: user.name);
     final emailController = TextEditingController(text: user.email);
     final rekeningController = TextEditingController(text: user.rekening);
-    UserRole selectedRole = UserRole.values.firstWhere(
-      (role) => role.name == user.role,
-      orElse: () => UserRole.USER,
-    );
+    UserRole selectedRole = UserRole.values.firstWhere((role) => role.name == user.role, orElse: () => UserRole.USER);
     bool isLoading = false;
 
     showDialog(
@@ -581,13 +498,9 @@ class _AdminUserPageState extends State<AdminUserPage> {
                         child: Row(
                           children: [
                             Icon(
-                              role == UserRole.ADMIN
-                                  ? Icons.admin_panel_settings
-                                  : Icons.person,
+                              role == UserRole.ADMIN ? Icons.admin_panel_settings : Icons.person,
                               size: 16,
-                              color: role == UserRole.ADMIN
-                                  ? Colors.purple.shade600
-                                  : Colors.blue.shade600,
+                              color: role == UserRole.ADMIN ? Colors.purple.shade600 : Colors.blue.shade600,
                             ),
                             SizedBox(width: 8),
                             Text(role.name),
@@ -606,10 +519,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
             ),
           ),
           actions: [
-            TextButton(
-              onPressed: isLoading ? null : () => Navigator.pop(context),
-              child: Text('Batal'),
-            ),
+            TextButton(onPressed: isLoading ? null : () => Navigator.pop(context), child: Text('Batal')),
             ElevatedButton(
               onPressed: isLoading
                   ? null
@@ -634,19 +544,13 @@ class _AdminUserPageState extends State<AdminUserPage> {
 
                           if (response.success) {
                             Navigator.pop(context);
-                            _showSnackBar(
-                              'User berhasil diupdate',
-                              Colors.green,
-                            );
+                            _showSnackBar('User berhasil diupdate', Colors.green);
                             _loadUsers(); // Refresh data
                           } else {
                             _showSnackBar(response.message, Colors.red);
                           }
                         } catch (e) {
-                          _showSnackBar(
-                            'Gagal mengupdate user: ${e.toString()}',
-                            Colors.red,
-                          );
+                          _showSnackBar('Gagal mengupdate user: ${e.toString()}', Colors.red);
                         } finally {
                           setDialogState(() {
                             isLoading = false;
@@ -654,9 +558,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
                         }
                       }
                     },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue.shade600,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue.shade600),
               child: isLoading
                   ? SizedBox(
                       width: 20,
@@ -693,17 +595,11 @@ class _AdminUserPageState extends State<AdminUserPage> {
             SizedBox(height: 12),
             Container(
               padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Nama: ${user.name}',
-                    style: TextStyle(fontWeight: FontWeight.w500),
-                  ),
+                  Text('Nama: ${user.name}', style: TextStyle(fontWeight: FontWeight.w500)),
                   Text('Email: ${user.email}'),
                   Text('Role: ${user.role}'),
                 ],
@@ -717,10 +613,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
           ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text('Batal'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: Text('Batal')),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(context);
@@ -730,10 +623,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
                 _showSnackBar('User berhasil dihapus', Colors.green);
                 _loadUsers(); // Refresh data
               } catch (e) {
-                _showSnackBar(
-                  'Gagal menghapus user: ${e.toString()}',
-                  Colors.red,
-                );
+                _showSnackBar('Gagal menghapus user: ${e.toString()}', Colors.red);
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
@@ -744,12 +634,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
     );
   }
 
-  bool _validateUserForm(
-    String name,
-    String email,
-    String password,
-    String rekening,
-  ) {
+  bool _validateUserForm(String name, String email, String password, String rekening) {
     if (name.trim().isEmpty) {
       _showSnackBar('Nama tidak boleh kosong', Colors.red);
       return false;
@@ -766,9 +651,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
     }
 
     // Check if email already exists
-    if (_users.any(
-      (user) => user.email.toLowerCase() == email.trim().toLowerCase(),
-    )) {
+    if (_users.any((user) => user.email.toLowerCase() == email.trim().toLowerCase())) {
       _showSnackBar('Email sudah terdaftar', Colors.red);
       return false;
     }
@@ -788,11 +671,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
     }
 
     // Check if email already exists (excluding current user)
-    if (_users.any(
-      (user) =>
-          user.email.toLowerCase() == email.trim().toLowerCase() &&
-          user.id != userId,
-    )) {
+    if (_users.any((user) => user.email.toLowerCase() == email.trim().toLowerCase() && user.id != userId)) {
       _showSnackBar('Email sudah terdaftar', Colors.red);
       return false;
     }
@@ -805,19 +684,12 @@ class _AdminUserPageState extends State<AdminUserPage> {
   }
 
   void _showSnackBar(String message, Color backgroundColor) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: backgroundColor,
-        duration: Duration(seconds: 3),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message), backgroundColor: backgroundColor, duration: Duration(seconds: 3)));
   }
 
   String _formatCurrency(int amount) {
-    return amount.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]}.',
-    );
+    return amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.');
   }
 }

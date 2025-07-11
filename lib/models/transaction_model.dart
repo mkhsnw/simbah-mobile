@@ -29,13 +29,11 @@ class TransactionData {
       userId: json['userId']?.toString() ?? '',
       type: json['type']?.toString() ?? '',
       totalAmount: json['totalAmount']?.toString() ?? '0',
-      description: json['description']?.toString() ?? '',
+      description: json['description']?.toString() ?? 'No Description',
       createdAt: _parseISODate(json['createdAt']),
       updatedAt: _parseISODate(json['updatedAt']),
       user: json['user'] != null ? User.fromJson(json['user']) : null,
-      items: json['items'] != null
-          ? (json['items'] as List).map((item) => Item.fromJson(item)).toList()
-          : null,
+      items: json['items'] != null ? (json['items'] as List).map((item) => Item.fromJson(item)).toList() : null,
     );
   }
 
@@ -97,13 +95,7 @@ class WasteCategory {
   DateTime? createdAt;
   DateTime? updatedAt;
 
-  WasteCategory({
-    required this.id,
-    required this.name,
-    required this.pricePerKg,
-    this.createdAt,
-    this.updatedAt,
-  });
+  WasteCategory({required this.id, required this.name, required this.pricePerKg, this.createdAt, this.updatedAt});
 
   factory WasteCategory.fromJson(Map<String, dynamic> json) {
     return WasteCategory(
@@ -156,23 +148,13 @@ class TransactionModel {
   String message;
   List<TransactionData> data;
 
-  TransactionModel({
-    required this.success,
-    required this.message,
-    required this.data,
-  });
+  TransactionModel({required this.success, required this.message, required this.data});
 
   factory TransactionModel.fromJson(Map<String, dynamic> json) {
     var dataList = json['data'] as List? ?? [];
-    List<TransactionData> transactionDataList = dataList
-        .map((item) => TransactionData.fromJson(item))
-        .toList();
+    List<TransactionData> transactionDataList = dataList.map((item) => TransactionData.fromJson(item)).toList();
 
-    return TransactionModel(
-      success: json['success'] ?? false,
-      message: json['message'] ?? '',
-      data: transactionDataList,
-    );
+    return TransactionModel(success: json['success'] ?? false, message: json['message'] ?? '', data: transactionDataList);
   }
 }
 
@@ -181,11 +163,7 @@ class ReportModel {
   String message;
   ReportData data;
 
-  ReportModel({
-    required this.success,
-    required this.message,
-    required this.data,
-  });
+  ReportModel({required this.success, required this.message, required this.data});
 
   factory ReportModel.fromJson(Map<String, dynamic> json) {
     return ReportModel(
@@ -228,7 +206,7 @@ class ReportData {
       depositCount: json['depositCount'] ?? 0,
       withdrawalCount: json['withdrawalCount'] ?? 0,
       currentBalance: json['currentBalance'] ?? 0,
-      averageDepositAmount: json['averageDepositAmount'] ?? 0,
+      averageDepositAmount: int.tryParse(json['averageDepositAmount'].toString()) ?? 0,
       averageWithdrawAmount: json['averageWithdrawAmount'] ?? 0,
     );
   }

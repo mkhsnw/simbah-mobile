@@ -44,9 +44,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
         print('User Data loaded - rekening: ${_userData?.rekening}');
       } else {
         setState(() {
-          _errorMessage = response.message.isEmpty
-              ? 'Gagal memuat data user'
-              : response.message;
+          _errorMessage = response.message.isEmpty ? 'Gagal memuat data user' : response.message;
           _isLoading = false;
         });
       }
@@ -88,9 +86,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Row(
             children: [
               Icon(Icons.logout, color: Colors.red.shade600),
@@ -100,10 +96,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
           ),
           content: Text('Apakah Anda yakin ingin keluar dari aplikasi?'),
           actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Batal'),
-            ),
+            TextButton(onPressed: () => Navigator.of(context).pop(), child: Text('Batal')),
             ElevatedButton(
               onPressed: () async {
                 Navigator.of(context).pop(); // Close dialog first
@@ -116,17 +109,10 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                     builder: (context) => Center(
                       child: Container(
                         padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          children: [
-                            CircularProgressIndicator(),
-                            SizedBox(height: 16),
-                            Text('Sedang logout...'),
-                          ],
+                          children: [CircularProgressIndicator(), SizedBox(height: 16), Text('Sedang logout...')],
                         ),
                       ),
                     ),
@@ -165,19 +151,13 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                   }
 
                   if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Terjadi kesalahan saat logout'),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text('Terjadi kesalahan saat logout'), backgroundColor: Colors.red));
                   }
                 }
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red.shade600,
-                foregroundColor: Colors.white,
-              ),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade600, foregroundColor: Colors.white),
               child: Text('Logout'),
             ),
           ],
@@ -221,24 +201,16 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                             children: [
                               Text(
                                 'SIMBAH',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 'Bank Sampah Pagar Idum',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontSize: 14,
-                                ),
+                                style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14),
                               ),
                             ],
                           ),
                           GestureDetector(
-                            onTap:
-                                _handleLogout, // ✅ Panggil fungsi logout dengan konfirmasi
+                            onTap: _handleLogout, // ✅ Panggil fungsi logout dengan konfirmasi
                             child: Container(
                               padding: EdgeInsets.all(4),
                               decoration: BoxDecoration(
@@ -247,11 +219,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                               ),
                               child: IconButton(
                                 onPressed: _handleLogout,
-                                icon: Icon(
-                                  Icons.logout,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
+                                icon: Icon(Icons.logout, color: Colors.white, size: 20),
                               ),
                             ),
                           ),
@@ -266,10 +234,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                       decoration: BoxDecoration(
                         color: Colors.white.withOpacity(0.15),
                         borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: Colors.white.withOpacity(0.3),
-                          width: 1,
-                        ),
+                        border: Border.all(color: Colors.white.withOpacity(0.3), width: 1),
                       ),
                       child: _isLoading
                           ? _buildLoadingWidget()
@@ -286,10 +251,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                         width: double.infinity,
                         decoration: BoxDecoration(
                           color: Colors.grey.shade50,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
-                          ),
+                          borderRadius: BorderRadius.only(topLeft: Radius.circular(30), topRight: Radius.circular(30)),
                         ),
                         child: Padding(
                           padding: EdgeInsets.all(24),
@@ -298,19 +260,11 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                             children: [
                               Row(
                                 children: [
-                                  Icon(
-                                    Icons.info_outline,
-                                    color: Colors.green.shade600,
-                                    size: 24,
-                                  ),
+                                  Icon(Icons.info_outline, color: Colors.green.shade600, size: 24),
                                   SizedBox(width: 8),
                                   Text(
-                                    'Cara Penarikan Saldo',
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.grey.shade800,
-                                    ),
+                                    'Cara Penarikan Saldo Offline',
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: Colors.grey.shade800),
                                   ),
                                 ],
                               ),
@@ -319,24 +273,12 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                               // Steps
                               _buildStepItem(
                                 1,
-                                'Datang ke Bank Sampah Pagar Idum dengan membawa KTP',
+                                'Datang ke Bank Sampah Pagar Idum dengan membawa KTP atau dengan cara tekan tombol "Penarikan" di atas.',
                                 Colors.green.shade600,
                               ),
-                              _buildStepItem(
-                                2,
-                                'Isi formulir penarikan saldo',
-                                Colors.blue.shade600,
-                              ),
-                              _buildStepItem(
-                                3,
-                                'Tunggu konfirmasi dari petugas',
-                                Colors.orange.shade600,
-                              ),
-                              _buildStepItem(
-                                4,
-                                'Saldo akan diberikan dalam bentuk tunai',
-                                Colors.purple.shade600,
-                              ),
+                              _buildStepItem(2, 'Isi formulir penarikan saldo', Colors.blue.shade600),
+                              _buildStepItem(3, 'Tunggu konfirmasi dari petugas', Colors.orange.shade600),
+                              _buildStepItem(4, 'Saldo akan diberikan dalam bentuk tunai', Colors.purple.shade600),
 
                               SizedBox(height: 24),
 
@@ -346,24 +288,16 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                                 decoration: BoxDecoration(
                                   color: Colors.amber.shade50,
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.amber.shade200,
-                                    width: 1,
-                                  ),
+                                  border: Border.all(color: Colors.amber.shade200, width: 1),
                                 ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.warning_amber_outlined,
-                                      color: Colors.amber.shade700,
-                                      size: 20,
-                                    ),
+                                    Icon(Icons.warning_amber_outlined, color: Colors.amber.shade700, size: 20),
                                     SizedBox(width: 8),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             'Catatan:',
@@ -375,11 +309,8 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                                           ),
                                           SizedBox(height: 4),
                                           Text(
-                                            'Penarikan saldo minimal Rp 50.000 dan maksimal Rp 1.000.000 per hari.',
-                                            style: TextStyle(
-                                              color: Colors.amber.shade700,
-                                              fontSize: 13,
-                                            ),
+                                            'Penarikan saldo minimal Rp 1.000.',
+                                            style: TextStyle(color: Colors.amber.shade700, fontSize: 13),
                                           ),
                                         ],
                                       ),
@@ -396,24 +327,16 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                                 decoration: BoxDecoration(
                                   color: Colors.blue.shade50,
                                   borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: Colors.blue.shade200,
-                                    width: 1,
-                                  ),
+                                  border: Border.all(color: Colors.blue.shade200, width: 1),
                                 ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Icon(
-                                      Icons.schedule,
-                                      color: Colors.blue.shade700,
-                                      size: 20,
-                                    ),
+                                    Icon(Icons.schedule, color: Colors.blue.shade700, size: 20),
                                     SizedBox(width: 8),
                                     Expanded(
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             'Jam Operasional:',
@@ -426,11 +349,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                                           SizedBox(height: 4),
                                           Text(
                                             'Senin - Jumat: 08:00 - 16:00\nSabtu: 08:00 - 12:00\nMinggu: Tutup',
-                                            style: TextStyle(
-                                              color: Colors.blue.shade700,
-                                              fontSize: 13,
-                                              height: 1.4,
-                                            ),
+                                            style: TextStyle(color: Colors.blue.shade700, fontSize: 13, height: 1.4),
                                           ),
                                         ],
                                       ),
@@ -462,11 +381,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
       children: [
         Text(
           'Info Rekening',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
         ),
         SizedBox(height: 40),
         Center(
@@ -474,13 +389,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
             children: [
               CircularProgressIndicator(color: Colors.white, strokeWidth: 3),
               SizedBox(height: 16),
-              Text(
-                'Memuat data rekening...',
-                style: TextStyle(
-                  color: Colors.white.withOpacity(0.9),
-                  fontSize: 14,
-                ),
-              ),
+              Text('Memuat data rekening...', style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14)),
             ],
           ),
         ),
@@ -495,11 +404,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
       children: [
         Text(
           'Info Rekening',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
         ),
         SizedBox(height: 16),
         Container(
@@ -527,9 +432,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.green.shade600,
                   padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                 ),
               ),
             ],
@@ -545,59 +448,31 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
       children: [
         Text(
           'Info Rekening',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w600),
         ),
         SizedBox(height: 16),
 
         // User Name
         Row(
           children: [
-            Icon(
-              Icons.person_outline,
-              color: Colors.white.withOpacity(0.9),
-              size: 20,
-            ),
+            Icon(Icons.person_outline, color: Colors.white.withOpacity(0.9), size: 20),
             SizedBox(width: 8),
-            Text(
-              'Nama Nasabah',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 14,
-              ),
-            ),
+            Text('Nama Nasabah', style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14)),
           ],
         ),
         SizedBox(height: 4),
         Text(
           _userData?.name ?? '-',
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600),
         ),
         SizedBox(height: 16),
 
         // Account Number
         Row(
           children: [
-            Icon(
-              Icons.credit_card,
-              color: Colors.white.withOpacity(0.9),
-              size: 20,
-            ),
+            Icon(Icons.credit_card, color: Colors.white.withOpacity(0.9), size: 20),
             SizedBox(width: 8),
-            Text(
-              'No. Rekening',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 14,
-              ),
-            ),
+            Text('No. Nasabah', style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14)),
           ],
         ),
         SizedBox(height: 4),
@@ -610,12 +485,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
           ),
           child: Text(
             _userData?.rekening ?? '-',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 1.2,
-            ),
+            style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.2),
           ),
         ),
         SizedBox(height: 20),
@@ -628,30 +498,14 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Saldo Anda',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.9),
-                      fontSize: 14,
-                    ),
-                  ),
+                  Text('Saldo Anda', style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 14)),
                   SizedBox(height: 4),
                   Text(
                     _userData?.formattedBalance ?? 'Rp 0',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 4),
-                  Text(
-                    'Bank Sampah',
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.8),
-                      fontSize: 12,
-                    ),
-                  ),
+                  Text('Bank Sampah', style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12)),
                 ],
               ),
             ),
@@ -664,14 +518,12 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
                 context.push('/withdraw');
               },
               icon: Icon(Icons.account_balance_wallet, size: 18),
-              label: Text('Withdraw'),
+              label: Text('Penarikan'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,
                 foregroundColor: Colors.green.shade600,
                 padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 elevation: 2,
               ),
             ),
@@ -693,22 +545,12 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
             decoration: BoxDecoration(
               color: color,
               shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: color.withOpacity(0.3),
-                  blurRadius: 4,
-                  offset: Offset(0, 2),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: color.withOpacity(0.3), blurRadius: 4, offset: Offset(0, 2))],
             ),
             child: Center(
               child: Text(
                 number.toString(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14),
               ),
             ),
           ),
@@ -716,14 +558,7 @@ class _InfoRekeningPageState extends State<InfoRekeningPage> {
           Expanded(
             child: Padding(
               padding: EdgeInsets.only(top: 4),
-              child: Text(
-                text,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey.shade700,
-                  height: 1.4,
-                ),
-              ),
+              child: Text(text, style: TextStyle(fontSize: 14, color: Colors.grey.shade700, height: 1.4)),
             ),
           ),
         ],

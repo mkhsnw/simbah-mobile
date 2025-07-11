@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:simbah/pages/register_page.dart';
 import 'package:simbah/services/auth_service.dart';
 import 'package:simbah/services/user_service.dart';
 import 'package:simbah/utils/exception_manager.dart';
@@ -46,15 +47,8 @@ class _LoginPageState extends State<LoginPage> {
                           width: 80,
                           height: 80,
                           margin: EdgeInsets.only(bottom: 16.0),
-                          decoration: BoxDecoration(
-                            color: Colors.green.shade100,
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.recycling,
-                            size: 40,
-                            color: Colors.green.shade600,
-                          ),
+                          decoration: BoxDecoration(color: Colors.green.shade100, shape: BoxShape.circle),
+                          child: Icon(Icons.recycling, size: 40, color: Colors.green.shade600),
                         ),
                         Text(
                           'SIMBAH',
@@ -68,20 +62,10 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(height: 8),
                         Text(
                           'Sistem Informasi Bank Sampah',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.green.shade600,
-                            fontWeight: FontWeight.w500,
-                          ),
+                          style: TextStyle(fontSize: 16, color: Colors.green.shade600, fontWeight: FontWeight.w500),
                         ),
                         SizedBox(height: 4),
-                        Text(
-                          'Bank Sampah Pagar Idum',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
+                        Text('Bank Sampah Pagar Idum', style: TextStyle(fontSize: 14, color: Colors.grey.shade600)),
                       ],
                     ),
                   ),
@@ -92,13 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 20,
-                          offset: Offset(0, 10),
-                        ),
-                      ],
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: Offset(0, 10))],
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -108,56 +86,35 @@ class _LoginPageState extends State<LoginPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Email',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade700,
-                              ),
+                              'Username',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
                             ),
                             SizedBox(height: 8),
                             TextField(
                               controller: _emailController,
                               enabled: !_isLoading, // ✅ Disable saat loading
                               decoration: InputDecoration(
-                                hintText: 'Masukkan Email',
-                                prefixIcon: Icon(
-                                  Icons.email_outlined,
-                                  color: Colors.grey.shade500,
-                                ),
+                                hintText: 'Masukkan Username',
+                                prefixIcon: Icon(Icons.person, color: Colors.grey.shade500),
                                 filled: true,
-                                fillColor: _isLoading
-                                    ? Colors.grey.shade100
-                                    : Colors.grey.shade50,
+                                fillColor: _isLoading ? Colors.grey.shade100 : Colors.grey.shade50,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade300,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade300,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.green.shade400,
-                                    width: 2,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.green.shade400, width: 2),
                                 ),
                                 disabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade200,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.grey.shade200),
                                 ),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
+                                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                               ),
                             ),
                           ],
@@ -171,11 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             Text(
                               'Password',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.grey.shade700,
-                              ),
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade700),
                             ),
                             SizedBox(height: 8),
                             TextField(
@@ -184,15 +137,10 @@ class _LoginPageState extends State<LoginPage> {
                               enabled: !_isLoading, // ✅ Disable saat loading
                               decoration: InputDecoration(
                                 hintText: 'Masukkan password',
-                                prefixIcon: Icon(
-                                  Icons.lock_outline,
-                                  color: Colors.grey.shade500,
-                                ),
+                                prefixIcon: Icon(Icons.lock_outline, color: Colors.grey.shade500),
                                 suffixIcon: IconButton(
                                   icon: Icon(
-                                    _obscurePassword
-                                        ? Icons.visibility_off_outlined
-                                        : Icons.visibility_outlined,
+                                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
                                     color: Colors.grey.shade500,
                                   ),
                                   onPressed: _isLoading
@@ -200,44 +148,29 @@ class _LoginPageState extends State<LoginPage> {
                                       : () {
                                           // ✅ Disable saat loading
                                           setState(() {
-                                            _obscurePassword =
-                                                !_obscurePassword;
+                                            _obscurePassword = !_obscurePassword;
                                           });
                                         },
                                 ),
                                 filled: true,
-                                fillColor: _isLoading
-                                    ? Colors.grey.shade100
-                                    : Colors.grey.shade50,
+                                fillColor: _isLoading ? Colors.grey.shade100 : Colors.grey.shade50,
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade300,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade300,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.green.shade400,
-                                    width: 2,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.green.shade400, width: 2),
                                 ),
                                 disabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(12),
-                                  borderSide: BorderSide(
-                                    color: Colors.grey.shade200,
-                                  ),
+                                  borderSide: BorderSide(color: Colors.grey.shade200),
                                 ),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 16,
-                                ),
+                                contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                               ),
                             ),
                           ],
@@ -247,18 +180,12 @@ class _LoginPageState extends State<LoginPage> {
 
                         // ✅ Login Button dengan Loading State
                         ElevatedButton(
-                          onPressed: _isLoading
-                              ? null
-                              : _handleLogin, // Disable saat loading
+                          onPressed: _isLoading ? null : _handleLogin, // Disable saat loading
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _isLoading
-                                ? Colors.grey.shade400
-                                : Colors.green.shade600,
+                            backgroundColor: _isLoading ? Colors.grey.shade400 : Colors.green.shade600,
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                             elevation: _isLoading ? 0 : 2,
                           ),
                           child: _isLoading
@@ -270,32 +197,17 @@ class _LoginPageState extends State<LoginPage> {
                                       height: 20,
                                       child: CircularProgressIndicator(
                                         strokeWidth: 2,
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                              Colors.white,
-                                            ),
+                                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                                       ),
                                     ),
                                     SizedBox(width: 12),
-                                    Text(
-                                      'Memproses...',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                                    Text('Memproses...', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                                   ],
                                 )
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
-                                      'Masuk',
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
+                                    Text('Masuk', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                                     SizedBox(width: 8),
                                     Icon(Icons.arrow_forward, size: 20),
                                   ],
@@ -307,25 +219,19 @@ class _LoginPageState extends State<LoginPage> {
                         // Register Link
                         Center(
                           child: TextButton(
-                            onPressed: _isLoading
-                                ? null
-                                : _handleRegister, // ✅ Disable saat loading
+                            onPressed: _isLoading ? null : _handleRegister, // ✅ Disable saat loading
                             child: RichText(
                               text: TextSpan(
                                 text: 'Belum punya akun? ',
                                 style: TextStyle(
-                                  color: _isLoading
-                                      ? Colors.grey.shade400
-                                      : Colors.grey.shade600,
+                                  color: _isLoading ? Colors.grey.shade400 : Colors.grey.shade600,
                                   fontSize: 14,
                                 ),
                                 children: [
                                   TextSpan(
                                     text: 'Daftar',
                                     style: TextStyle(
-                                      color: _isLoading
-                                          ? Colors.grey.shade400
-                                          : Colors.green.shade600,
+                                      color: _isLoading ? Colors.grey.shade400 : Colors.green.shade600,
                                       fontWeight: FontWeight.w600,
                                     ),
                                   ),
@@ -387,10 +293,7 @@ class _LoginPageState extends State<LoginPage> {
           }
         }
       } else {
-        _showSnackBar(
-          'Login gagal! Periksa email dan password Anda.',
-          Colors.red,
-        );
+        _showSnackBar('Login gagal! Periksa email dan password Anda.', Colors.red);
       }
     } catch (e) {
       if (e is AuthException) {
@@ -409,7 +312,7 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleRegister() {
-    context.push('/register');
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => RegisterPage()));
   }
 
   // ✅ Update SnackBar dengan Color Parameter

@@ -14,8 +14,7 @@ class WithdrawPage extends StatefulWidget {
   State<WithdrawPage> createState() => _WithdrawPageState();
 }
 
-class _WithdrawPageState extends State<WithdrawPage>
-    with SingleTickerProviderStateMixin {
+class _WithdrawPageState extends State<WithdrawPage> with SingleTickerProviderStateMixin {
   final UserService _userService = UserService();
   final WithdrawRequestService _withdrawService = WithdrawRequestService();
   final TextEditingController _amountController = TextEditingController();
@@ -57,9 +56,7 @@ class _WithdrawPageState extends State<WithdrawPage>
         });
       } else {
         setState(() {
-          _errorMessage = response.message.isEmpty
-              ? 'Gagal memuat data user'
-              : response.message;
+          _errorMessage = response.message.isEmpty ? 'Gagal memuat data user' : response.message;
           _isLoading = false;
         });
       }
@@ -84,10 +81,7 @@ class _WithdrawPageState extends State<WithdrawPage>
         backgroundColor: Colors.green.shade600,
         foregroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ),
+        leading: IconButton(icon: Icon(Icons.arrow_back), onPressed: () => context.pop()),
         bottom: TabBar(
           controller: _tabController,
           tabs: [
@@ -103,10 +97,7 @@ class _WithdrawPageState extends State<WithdrawPage>
           ? Center(child: CircularProgressIndicator())
           : _errorMessage.isNotEmpty
           ? _buildErrorWidget()
-          : TabBarView(
-              controller: _tabController,
-              children: [_buildRequestTab(), WithdrawHistoryTab()],
-            ),
+          : TabBarView(controller: _tabController, children: [_buildRequestTab(), WithdrawHistoryTab()]),
     );
   }
 
@@ -139,29 +130,16 @@ class _WithdrawPageState extends State<WithdrawPage>
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Saldo Tersedia',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.9),
-                fontSize: 16,
-              ),
-            ),
+            Text('Saldo Tersedia', style: TextStyle(color: Colors.white.withOpacity(0.9), fontSize: 16)),
             SizedBox(height: 8),
             Text(
               _userData?.formattedBalance ?? 'Rp 0',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(color: Colors.white, fontSize: 36, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 4),
             Text(
               'Bank Sampah ${_userData?.name ?? ''}',
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 14,
-              ),
+              style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 14),
             ),
           ],
         ),
@@ -176,13 +154,7 @@ class _WithdrawPageState extends State<WithdrawPage>
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 5),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 5))],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,11 +165,7 @@ class _WithdrawPageState extends State<WithdrawPage>
               SizedBox(width: 8),
               Text(
                 'Request Penarikan Saldo',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade800,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey.shade800),
               ),
             ],
           ),
@@ -206,21 +174,16 @@ class _WithdrawPageState extends State<WithdrawPage>
           // Amount Field
           Text(
             'Jumlah Penarikan',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade700,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey.shade700),
           ),
           SizedBox(height: 8),
           TextField(
             controller: _amountController,
             keyboardType: TextInputType.number,
             decoration: InputDecoration(
-              hintText: 'Masukkan jumlah (min. Rp 50.000)',
+              hintText: 'Masukkan jumlah (min. Rp 1.000)',
               prefixText: 'Rp ',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.green.shade600, width: 2),
@@ -234,10 +197,7 @@ class _WithdrawPageState extends State<WithdrawPage>
           // Description Field
           Text(
             'Keterangan',
-            style: TextStyle(
-              fontWeight: FontWeight.w600,
-              color: Colors.grey.shade700,
-            ),
+            style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey.shade700),
           ),
           SizedBox(height: 8),
           TextField(
@@ -245,9 +205,7 @@ class _WithdrawPageState extends State<WithdrawPage>
             maxLines: 4,
             decoration: InputDecoration(
               hintText: 'Masukkan keterangan (opsional)',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Colors.green.shade600, width: 2),
@@ -269,11 +227,7 @@ class _WithdrawPageState extends State<WithdrawPage>
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.info_outline,
-                  color: Colors.amber.shade700,
-                  size: 20,
-                ),
+                Icon(Icons.info_outline, color: Colors.amber.shade700, size: 20),
                 SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -281,23 +235,14 @@ class _WithdrawPageState extends State<WithdrawPage>
                     children: [
                       Text(
                         'Syarat & Ketentuan:',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.amber.shade800,
-                          fontSize: 14,
-                        ),
+                        style: TextStyle(fontWeight: FontWeight.w600, color: Colors.amber.shade800, fontSize: 14),
                       ),
                       SizedBox(height: 4),
                       Text(
-                        '• Minimal penarikan Rp 50.000\n'
-                        '• Maksimal penarikan Rp 1.000.000/hari\n'
+                        '• Minimal penarikan Rp 1.000\n'
                         '• Proses 1-2 hari kerja\n'
                         '• Wajib membawa KTP saat pengambilan',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.amber.shade700,
-                          height: 1.4,
-                        ),
+                        style: TextStyle(fontSize: 12, color: Colors.amber.shade700, height: 1.4),
                       ),
                     ],
                   ),
@@ -316,9 +261,7 @@ class _WithdrawPageState extends State<WithdrawPage>
                 backgroundColor: Colors.green.shade600,
                 foregroundColor: Colors.white,
                 padding: EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 elevation: 2,
               ),
               child: _isSubmitting
@@ -330,22 +273,14 @@ class _WithdrawPageState extends State<WithdrawPage>
                           height: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                              Colors.white,
-                            ),
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
                           ),
                         ),
                         SizedBox(width: 12),
                         Text('Memproses...'),
                       ],
                     )
-                  : Text(
-                      'Ajukan Request Penarikan',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                  : Text('Ajukan Request Penarikan', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
             ),
           ),
         ],
@@ -362,17 +297,9 @@ class _WithdrawPageState extends State<WithdrawPage>
           children: [
             Icon(Icons.error_outline, size: 64, color: Colors.red),
             SizedBox(height: 16),
-            Text(
-              _errorMessage,
-              style: TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
+            Text(_errorMessage, style: TextStyle(fontSize: 16), textAlign: TextAlign.center),
             SizedBox(height: 16),
-            ElevatedButton.icon(
-              onPressed: _loadUserData,
-              icon: Icon(Icons.refresh),
-              label: Text('Coba Lagi'),
-            ),
+            ElevatedButton.icon(onPressed: _loadUserData, icon: Icon(Icons.refresh), label: Text('Coba Lagi')),
           ],
         ),
       ),
@@ -391,8 +318,8 @@ class _WithdrawPageState extends State<WithdrawPage>
     }
 
     final amount = int.tryParse(amountText.replaceAll(RegExp(r'[^0-9]'), ''));
-    if (amount == null || amount < 50000) {
-      _showSnackBar('Jumlah penarikan minimal Rp 50.000', Colors.red);
+    if (amount == null || amount < 1000) {
+      _showSnackBar('Jumlah penarikan minimal Rp 1.000', Colors.red);
       return;
     }
 
@@ -417,10 +344,7 @@ class _WithdrawPageState extends State<WithdrawPage>
         description.isEmpty ? 'Penarikan saldo' : description,
       );
 
-      _showSnackBar(
-        'Request penarikan berhasil diajukan. Menunggu persetujuan admin.',
-        Colors.green,
-      );
+      _showSnackBar('Request penarikan berhasil diajukan. Menunggu persetujuan admin.', Colors.green);
 
       // Clear form
       _amountController.clear();

@@ -18,11 +18,7 @@ class TransactionService {
       }
       final response = await http.get(
         Uri.parse('${ApiConfig.baseUrl}/transaction/user'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer $token'},
       );
       print('Transaction Response Code: ${response.statusCode}');
       print('Transaction Response Body: ${response.body}');
@@ -33,9 +29,7 @@ class TransactionService {
       } else if (response.statusCode == 401) {
         throw UnauthorizedException('Unauthorized access. Please login again.');
       } else {
-        throw Exception(
-          'Failed to load transactions: ${response.reasonPhrase}',
-        );
+        throw Exception('Failed to load transactions: ${response.reasonPhrase}');
       }
     } catch (e) {
       print('Error: $e');
@@ -54,11 +48,7 @@ class TransactionService {
       }
       final response = await http.get(
         Uri.parse('${ApiConfig.baseUrl}/transaction'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer $token'},
       );
       print('Transaction Response Code: ${response.statusCode}');
       print('Transaction Response Body: ${response.body}');
@@ -69,9 +59,7 @@ class TransactionService {
       } else if (response.statusCode == 401) {
         throw UnauthorizedException('Unauthorized access. Please login again.');
       } else {
-        throw Exception(
-          'Failed to load transactions: ${response.reasonPhrase}',
-        );
+        throw Exception('Failed to load transactions: ${response.reasonPhrase}');
       }
     } catch (e) {
       print('Error: $e');
@@ -96,17 +84,8 @@ class TransactionService {
       }
       final response = await http.post(
         Uri.parse('${ApiConfig.baseUrl}/transaction'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode({
-          'type': type,
-          'userId': userId,
-          'description': description,
-          'items': items,
-        }),
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+        body: json.encode({'type': type, 'userId': userId, 'description': description, 'items': items}),
       );
       print('Create Transaction Response Code: ${response.statusCode}');
       print('Create Transaction Response Body: ${response.body}');
@@ -116,9 +95,7 @@ class TransactionService {
       } else if (response.statusCode == 401) {
         throw UnauthorizedException('Unauthorized access. Please login again.');
       } else {
-        throw Exception(
-          'Failed to create transaction: ${response.reasonPhrase}',
-        );
+        throw Exception('Failed to create transaction: ${response.reasonPhrase}');
       }
     } catch (e) {
       print('Error: $e');
@@ -143,17 +120,8 @@ class TransactionService {
       }
       final response = await http.post(
         Uri.parse('${ApiConfig.baseUrl}/transaction'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode({
-          'type': type,
-          'userId': userId,
-          'description': description,
-          'amount': amount,
-        }),
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+        body: json.encode({'type': type, 'userId': userId, 'description': description, 'amount': amount}),
       );
       print('Create Transaction Response Code: ${response.statusCode}');
       print('Create Transaction Response Body: ${response.body}');
@@ -163,13 +131,9 @@ class TransactionService {
       } else if (response.statusCode == 401) {
         throw UnauthorizedException('Unauthorized access. Please login again.');
       } else if (response.statusCode == 400) {
-        throw Exception(
-          'Minimal pengambilan adalah Rp. 50.000 atau saldo anda tidak mencukupi',
-        );
+        throw Exception('Minimal pengambilan adalah Rp. 50.000 atau saldo anda tidak mencukupi');
       } else {
-        throw Exception(
-          'Failed to create transaction: ${response.reasonPhrase}',
-        );
+        throw Exception('Failed to create transaction: ${response.reasonPhrase}');
       }
     } catch (e) {
       print('Error: $e');
@@ -188,11 +152,7 @@ class TransactionService {
       }
       final response = await http.get(
         Uri.parse('${ApiConfig.baseUrl}/transaction/report'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer $token'},
       );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -202,7 +162,8 @@ class TransactionService {
       } else {
         throw Exception('Failed to load report: ${response.reasonPhrase}');
       }
-    } catch (e) {
+    } catch (e, s) {
+      print(s);
       throw Exception('Terjadi kesalahan saat memuat data laporan: $e');
     }
   }
@@ -220,16 +181,8 @@ class TransactionService {
       }
       final response = await http.put(
         Uri.parse('${ApiConfig.baseUrl}/transaction/$transactionId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode({
-          'userId': userId,
-          'description': description,
-          'items': items,
-        }),
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+        body: json.encode({'userId': userId, 'description': description, 'items': items}),
       );
       print('Edit Transaction Response Code: ${response.statusCode}');
       print('Edit Transaction Response Body: ${response.body}');
@@ -247,12 +200,7 @@ class TransactionService {
     }
   }
 
-  Future<dynamic> editTransactionWithdraw(
-    String userId,
-    int amount,
-    String description,
-    String transactionId,
-  ) async {
+  Future<dynamic> editTransactionWithdraw(String userId, int amount, String description, String transactionId) async {
     try {
       final token = await AuthManager.getToken();
       if (token == null) {
@@ -260,16 +208,8 @@ class TransactionService {
       }
       final response = await http.put(
         Uri.parse('${ApiConfig.baseUrl}/transaction/$transactionId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
-        body: json.encode({
-          'userId': userId,
-          'totalAmount': amount,
-          'description': description,
-        }),
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer $token'},
+        body: json.encode({'userId': userId, 'totalAmount': amount, 'description': description}),
       );
       print('Edit Transaction Response Code: ${response.statusCode}');
       print('Edit Transaction Response Body: ${response.body}');
@@ -287,10 +227,7 @@ class TransactionService {
     }
   }
 
-  Future<dynamic> deleteTransaction(
-    String transactionId, {
-    BuildContext? context,
-  }) async {
+  Future<dynamic> deleteTransaction(String transactionId, {BuildContext? context}) async {
     try {
       final token = await AuthManager.getToken();
       if (token == null) {
@@ -298,11 +235,7 @@ class TransactionService {
       }
       final response = await http.delete(
         Uri.parse('${ApiConfig.baseUrl}/transaction/$transactionId'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+        headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'Authorization': 'Bearer $token'},
       );
       print('Delete Transaction Response Code: ${response.statusCode}');
       print('Delete Transaction Response Body: ${response.body}');
@@ -312,9 +245,7 @@ class TransactionService {
       } else if (response.statusCode == 401) {
         throw UnauthorizedException('Unauthorized access. Please login again.');
       } else {
-        throw Exception(
-          'Failed to delete transaction: ${response.reasonPhrase}',
-        );
+        throw Exception('Failed to delete transaction: ${response.reasonPhrase}');
       }
     } catch (e) {
       print('Error: $e');

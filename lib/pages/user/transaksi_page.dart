@@ -36,9 +36,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
         });
       } else {
         setState(() {
-          _errorMessage = transactionModel.message.isEmpty
-              ? 'Gagal memuat data transaksi'
-              : transactionModel.message;
+          _errorMessage = transactionModel.message.isEmpty ? 'Gagal memuat data transaksi' : transactionModel.message;
           _isLoading = false;
         });
       }
@@ -67,24 +65,23 @@ class _TransaksiPageState extends State<TransaksiPage> {
 
   String _formatCurrency(String amount) {
     final amountInt = int.tryParse(amount) ?? 0;
-    return amountInt.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]}.',
-    );
+    return amountInt.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]}.');
   }
 
   String _getTransactionDescription(TransactionData transaction) {
     try {
-      if (transaction.items != null && transaction.items!.isNotEmpty) {
-        // Untuk setoran sampah, tampilkan detail item
-        final item = transaction.items!.first;
-        return '${item.wasteCategory.name} - ${item.weightInKg} kg';
+      if (transaction.items != null && (transaction.items ?? []).isNotEmpty) {
+        return transaction.items!
+            .map((item) {
+              final name = item.wasteCategory.name;
+              final weight = item.weightInKg;
+              final subtotal = item.subtotal;
+              return '- $name: ${weight}kg (Rp${_formatCurrency(subtotal)})';
+            })
+            .join('\n');
       }
-      return transaction.description.isNotEmpty
-          ? transaction.description
-          : 'Transaksi ${transaction.type}';
+      return transaction.description.isNotEmpty ? transaction.description : 'Transaksi ${transaction.type}';
     } catch (e) {
-      print('Error getting transaction description: $e');
       return 'Deskripsi tidak tersedia';
     }
   }
@@ -115,11 +112,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
           children: [
             Text(
               'Riwayat Transaksi',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey.shade800,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.grey.shade800),
             ),
             SizedBox(height: 20),
             Expanded(
@@ -142,10 +135,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
         children: [
           CircularProgressIndicator(color: Colors.green.shade600),
           SizedBox(height: 16),
-          Text(
-            'Memuat riwayat transaksi...',
-            style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
-          ),
+          Text('Memuat riwayat transaksi...', style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
         ],
       ),
     );
@@ -172,9 +162,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
               backgroundColor: Colors.green.shade600,
               foregroundColor: Colors.white,
               padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
           ),
         ],
@@ -190,10 +178,7 @@ class _TransaksiPageState extends State<TransaksiPage> {
           children: [
             Icon(Icons.history_outlined, size: 64, color: Colors.grey.shade400),
             SizedBox(height: 16),
-            Text(
-              'Belum ada transaksi',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
-            ),
+            Text('Belum ada transaksi', style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ],
         ),
       );
@@ -214,29 +199,19 @@ class _TransaksiPageState extends State<TransaksiPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
             ),
             child: Row(
               children: [
                 Container(
                   padding: EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: isDebit
-                        ? Colors.green.shade100
-                        : Colors.red.shade100,
+                    color: isDebit ? Colors.green.shade100 : Colors.red.shade100,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     isDebit ? Icons.add : Icons.remove,
-                    color: isDebit
-                        ? Colors.green.shade600
-                        : Colors.red.shade600,
+                    color: isDebit ? Colors.green.shade600 : Colors.red.shade600,
                     size: 20,
                   ),
                 ),
@@ -247,28 +222,15 @@ class _TransaksiPageState extends State<TransaksiPage> {
                     children: [
                       Text(
                         isDebit ? 'Setoran' : 'Penarikan',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey.shade800,
-                        ),
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade800),
                       ),
                       SizedBox(height: 4),
                       Text(
                         _getTransactionDescription(transaction),
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: Colors.grey.shade600,
-                        ),
+                        style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
                       ),
                       SizedBox(height: 4),
-                      Text(
-                        _formatDate(transaction.createdAt),
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey.shade500,
-                        ),
-                      ),
+                      Text(_formatDate(transaction.createdAt), style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
                     ],
                   ),
                 ),
@@ -280,25 +242,16 @@ class _TransaksiPageState extends State<TransaksiPage> {
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: isDebit
-                            ? Colors.green.shade600
-                            : Colors.red.shade600,
+                        color: isDebit ? Colors.green.shade600 : Colors.red.shade600,
                       ),
                     ),
                     SizedBox(height: 4),
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade100,
-                        borderRadius: BorderRadius.circular(8),
-                      ),
+                      decoration: BoxDecoration(color: Colors.green.shade100, borderRadius: BorderRadius.circular(8)),
                       child: Text(
                         'Berhasil',
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: Colors.green.shade700,
-                          fontWeight: FontWeight.w500,
-                        ),
+                        style: TextStyle(fontSize: 10, color: Colors.green.shade700, fontWeight: FontWeight.w500),
                       ),
                     ),
                   ],
