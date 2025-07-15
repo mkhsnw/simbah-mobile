@@ -31,9 +31,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
     });
 
     try {
-      final response = await _transactionService.getAllTransactions(
-        context: context,
-      );
+      final response = await _transactionService.getAllTransactions(context: context);
 
       if (response.success) {
         setState(() {
@@ -43,9 +41,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
         });
       } else {
         setState(() {
-          _errorMessage = response.message.isEmpty
-              ? 'Gagal memuat data transaksi'
-              : response.message;
+          _errorMessage = response.message.isEmpty ? 'Gagal memuat data transaksi' : response.message;
           _isLoading = false;
         });
       }
@@ -80,20 +76,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
 
     // Generate monthly reports
     _monthlyReports = [];
-    final monthNames = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
+    final monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
     for (int month = 1; month <= 12; month++) {
       final monthTransactions = monthlyTransactions[month] ?? [];
@@ -111,14 +94,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
         }
       }
 
-      _monthlyReports.add(
-        MonthlyReport(
-          monthNames[month - 1],
-          totalDeposit,
-          totalWithdrawal,
-          transactionCount,
-        ),
-      );
+      _monthlyReports.add(MonthlyReport(monthNames[month - 1], totalDeposit, totalWithdrawal, transactionCount));
     }
   }
 
@@ -156,10 +132,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
           children: [
             CircularProgressIndicator(color: Colors.green.shade600),
             SizedBox(height: 16),
-            Text(
-              'Memuat data laporan...',
-              style: TextStyle(color: Colors.grey.shade600, fontSize: 16),
-            ),
+            Text('Memuat data laporan...', style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
           ],
         ),
       );
@@ -204,22 +177,13 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
             ),
             child: Row(
               children: [
                 Icon(Icons.calendar_today, color: Colors.green.shade600),
                 SizedBox(width: 12),
-                Text(
-                  'Tahun: ',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-                ),
+                Text('Tahun: ', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
                 DropdownButton<int>(
                   value: _selectedYear,
                   underline: SizedBox(),
@@ -227,10 +191,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
                       .map(
                         (year) => DropdownMenuItem(
                           value: year,
-                          child: Text(
-                            year.toString(),
-                            style: TextStyle(fontWeight: FontWeight.w500),
-                          ),
+                          child: Text(year.toString(), style: TextStyle(fontWeight: FontWeight.w500)),
                         ),
                       )
                       .toList(),
@@ -244,17 +205,10 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
                 Spacer(),
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade100,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                  decoration: BoxDecoration(color: Colors.green.shade100, borderRadius: BorderRadius.circular(20)),
                   child: Text(
                     'Laporan Tahunan',
-                    style: TextStyle(
-                      color: Colors.green.shade700,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(color: Colors.green.shade700, fontSize: 12, fontWeight: FontWeight.w500),
                   ),
                 ),
               ],
@@ -263,26 +217,26 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
 
           SizedBox(height: 24),
 
-          // Summary Cards
           Row(
             children: [
               Expanded(
                 child: _buildSummaryCard(
-                  'Total Setoran',
-                  _getTotalDeposit(),
-                  Icons.trending_up,
+                  'Total Pendapatan Admin (15% Setoran)',
+                  _getTotalAdminIncome(),
+                  Icons.account_balance_wallet,
                   Colors.green,
+                  CrossAxisAlignment.center,
                 ),
               ),
+            ],
+          ),
+          SizedBox(height: 12),
+          // Summary Cards
+          Row(
+            children: [
+              Expanded(child: _buildSummaryCard('Total Setoran', _getTotalDeposit(), Icons.trending_up, Colors.green)),
               SizedBox(width: 12),
-              Expanded(
-                child: _buildSummaryCard(
-                  'Total Penarikan',
-                  _getTotalWithdrawal(),
-                  Icons.trending_down,
-                  Colors.red,
-                ),
-              ),
+              Expanded(child: _buildSummaryCard('Total Penarikan', _getTotalWithdrawal(), Icons.trending_down, Colors.red)),
             ],
           ),
 
@@ -300,12 +254,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
               ),
               SizedBox(width: 12),
               Expanded(
-                child: _buildSummaryCard(
-                  'Saldo Bersih',
-                  _getNetBalance(),
-                  Icons.account_balance_wallet,
-                  Colors.purple,
-                ),
+                child: _buildSummaryCard('Saldo Bersih', _getNetBalance(), Icons.account_balance_wallet, Colors.purple),
               ),
             ],
           ),
@@ -318,13 +267,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,11 +278,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
                     SizedBox(width: 8),
                     Text(
                       'Performa Terbaik',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade800,
-                      ),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade800),
                     ),
                   ],
                 ),
@@ -357,13 +296,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -374,11 +307,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
                     SizedBox(width: 8),
                     Text(
                       'Detail Bulanan $_selectedYear',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade800,
-                      ),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade800),
                     ),
                   ],
                 ),
@@ -396,13 +325,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
-                  blurRadius: 10,
-                  offset: Offset(0, 2),
-                ),
-              ],
+              boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -413,11 +336,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
                     SizedBox(width: 8),
                     Text(
                       'Aktivitas User $_selectedYear',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey.shade800,
-                      ),
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey.shade800),
                     ),
                   ],
                 ),
@@ -431,49 +350,28 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
     );
   }
 
-  Widget _buildSummaryCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildSummaryCard(String title, String value, IconData icon, Color color, [CrossAxisAlignment? align]) {
     return Container(
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: Offset(0, 2),
-          ),
-        ],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: align ?? CrossAxisAlignment.start,
         children: [
           Container(
             padding: EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(8),
-            ),
+            decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(8)),
             child: Icon(icon, color: color, size: 20),
           ),
           SizedBox(height: 12),
-          Text(
-            title,
-            style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
-          ),
+          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
           SizedBox(height: 4),
           Text(
             value,
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade800,
-            ),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Colors.grey.shade800),
           ),
         ],
       ),
@@ -617,15 +515,11 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
     // Sort by total deposit + transaction count
     final sortedReports = List<MonthlyReport>.from(_monthlyReports);
     sortedReports.sort(
-      (a, b) => (b.totalDeposit + b.transactionCount * 100).compareTo(
-        a.totalDeposit + a.transactionCount * 100,
-      ),
+      (a, b) => (b.totalDeposit + b.transactionCount * 100).compareTo(a.totalDeposit + a.transactionCount * 100),
     );
 
     // Filter out months with no activity
-    final activeReports = sortedReports
-        .where((r) => r.transactionCount > 0)
-        .toList();
+    final activeReports = sortedReports.where((r) => r.transactionCount > 0).toList();
 
     if (activeReports.isEmpty) {
       return Text('Tidak ada aktivitas untuk tahun $_selectedYear');
@@ -635,11 +529,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
       children: activeReports.take(3).toList().asMap().entries.map((entry) {
         final index = entry.key;
         final report = entry.value;
-        final icons = [
-          Icons.emoji_events,
-          Icons.military_tech,
-          Icons.workspace_premium,
-        ];
+        final icons = [Icons.emoji_events, Icons.military_tech, Icons.workspace_premium];
         final colors = [Colors.amber, Colors.grey, Colors.orange];
 
         return Container(
@@ -658,30 +548,17 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      '#${index + 1} ${report.month}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
+                    Text('#${index + 1} ${report.month}', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                     Text(
                       'Setoran: Rp ${_formatCurrency(report.totalDeposit)}',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                     ),
                   ],
                 ),
               ),
               Text(
                 '${report.transactionCount} transaksi',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: colors[index],
-                  fontWeight: FontWeight.w500,
-                ),
+                style: TextStyle(fontSize: 12, color: colors[index], fontWeight: FontWeight.w500),
               ),
             ],
           ),
@@ -699,10 +576,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
             children: [
               Icon(Icons.table_chart, size: 48, color: Colors.grey.shade400),
               SizedBox(height: 8),
-              Text(
-                'Tidak ada data untuk tahun $_selectedYear',
-                style: TextStyle(color: Colors.grey.shade500),
-              ),
+              Text('Tidak ada data untuk tahun $_selectedYear', style: TextStyle(color: Colors.grey.shade500)),
             ],
           ),
         ),
@@ -718,28 +592,25 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
             label: Text('Bulan', style: TextStyle(fontWeight: FontWeight.w600)),
           ),
           DataColumn(
-            label: Text(
-              'Setoran',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
+            label: Text('Setoran', style: TextStyle(fontWeight: FontWeight.w600)),
           ),
           DataColumn(
-            label: Text(
-              'Penarikan',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
+            label: Text('Penarikan', style: TextStyle(fontWeight: FontWeight.w600)),
           ),
           DataColumn(
-            label: Text(
-              'Transaksi',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
+            label: Text('Transaksi', style: TextStyle(fontWeight: FontWeight.w600)),
           ),
           DataColumn(
-            label: Text(
-              'Selisih',
-              style: TextStyle(fontWeight: FontWeight.w600),
-            ),
+            label: Text('Selisih', style: TextStyle(fontWeight: FontWeight.w600)),
+          ),
+          DataColumn(
+            label: Text('Tabungan Nasabah', style: TextStyle(fontWeight: FontWeight.w600)),
+          ),
+          DataColumn(
+            label: Text('Tabungan Admin', style: TextStyle(fontWeight: FontWeight.w600)),
+          ),
+          DataColumn(
+            label: Text('Detail', style: TextStyle(fontWeight: FontWeight.w600)),
           ),
         ],
         rows: _monthlyReports.map((report) {
@@ -751,50 +622,32 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
               DataCell(
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.green.shade100,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
+                  decoration: BoxDecoration(color: Colors.green.shade100, borderRadius: BorderRadius.circular(12)),
                   child: Text(
                     report.month,
-                    style: TextStyle(
-                      color: Colors.green.shade700,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(color: Colors.green.shade700, fontWeight: FontWeight.w500),
                   ),
                 ),
               ),
               DataCell(
                 Text(
                   'Rp ${_formatCurrency(report.totalDeposit)}',
-                  style: TextStyle(
-                    color: Colors.green.shade600,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(color: Colors.green.shade600, fontWeight: FontWeight.w500),
                 ),
               ),
               DataCell(
                 Text(
                   'Rp ${_formatCurrency(report.totalWithdrawal)}',
-                  style: TextStyle(
-                    color: Colors.red.shade600,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(color: Colors.red.shade600, fontWeight: FontWeight.w500),
                 ),
               ),
               DataCell(
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.shade100,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
+                  decoration: BoxDecoration(color: Colors.blue.shade100, borderRadius: BorderRadius.circular(8)),
                   child: Text(
                     '${report.transactionCount}',
-                    style: TextStyle(
-                      color: Colors.blue.shade700,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(color: Colors.blue.shade700, fontWeight: FontWeight.w500),
                   ),
                 ),
               ),
@@ -802,21 +655,60 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
                 Container(
                   padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: isPositive
-                        ? Colors.green.shade100
-                        : Colors.red.shade100,
+                    color: isPositive ? Colors.green.shade100 : Colors.red.shade100,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     '${isPositive ? '+' : ''}Rp ${_formatCurrency(difference.abs())}',
                     style: TextStyle(
-                      color: isPositive
-                          ? Colors.green.shade700
-                          : Colors.red.shade700,
+                      color: isPositive ? Colors.green.shade700 : Colors.red.shade700,
                       fontWeight: FontWeight.w500,
                       fontSize: 12,
                     ),
                   ),
+                ),
+              ),
+              DataCell(
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: (report.totalDeposit * .85).toInt() >= 0 ? Colors.green.shade100 : Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${(report.totalDeposit * .85).toInt() >= 0 ? '+' : ''}Rp ${_formatCurrency((report.totalDeposit * .85).toInt())}',
+                    style: TextStyle(
+                      color: (report.totalDeposit * .85).toInt() >= 0 ? Colors.green.shade700 : Colors.red.shade700,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+              DataCell(
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: (report.totalDeposit * .85).toInt() >= 0 ? Colors.green.shade100 : Colors.red.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${(report.totalDeposit * .15).toInt() >= 0 ? '+' : ''}Rp ${_formatCurrency((report.totalDeposit * .15).toInt())}',
+                    style: TextStyle(
+                      color: (report.totalDeposit * .85).toInt() >= 0 ? Colors.green.shade700 : Colors.red.shade700,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ),
+              DataCell(
+                IconButton(
+                  onPressed: () => context.go(
+                    '/admin/detail-montly-transaction',
+                    extra: {"month": report.month, "year": _selectedYear.toString()},
+                  ),
+                  icon: Icon(Icons.arrow_right),
                 ),
               ),
             ],
@@ -862,9 +754,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
     }
 
     final sortedUsers = userActivities.values.toList();
-    sortedUsers.sort(
-      (a, b) => b.transactionCount.compareTo(a.transactionCount),
-    );
+    sortedUsers.sort((a, b) => b.transactionCount.compareTo(a.transactionCount));
 
     if (sortedUsers.isEmpty) {
       return Text('Tidak ada aktivitas user untuk tahun $_selectedYear');
@@ -872,8 +762,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
 
     return Column(
       children: sortedUsers.take(5).map((userActivity) {
-        final netAmount =
-            userActivity.totalDeposit - userActivity.totalWithdrawal;
+        final netAmount = userActivity.totalDeposit - userActivity.totalWithdrawal;
         final isPositive = netAmount >= 0;
 
         return Container(
@@ -887,16 +776,10 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
           child: Row(
             children: [
               CircleAvatar(
-                backgroundColor: userActivity.role == 'ADMIN'
-                    ? Colors.purple.shade100
-                    : Colors.blue.shade100,
+                backgroundColor: userActivity.role == 'ADMIN' ? Colors.purple.shade100 : Colors.blue.shade100,
                 child: Icon(
-                  userActivity.role == 'ADMIN'
-                      ? Icons.admin_panel_settings
-                      : Icons.person,
-                  color: userActivity.role == 'ADMIN'
-                      ? Colors.purple.shade600
-                      : Colors.blue.shade600,
+                  userActivity.role == 'ADMIN' ? Icons.admin_panel_settings : Icons.person,
+                  color: userActivity.role == 'ADMIN' ? Colors.purple.shade600 : Colors.blue.shade600,
                   size: 20,
                 ),
               ),
@@ -905,19 +788,10 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      userActivity.userName,
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ),
+                    Text(userActivity.userName, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
                     Text(
                       '${userActivity.transactionCount} transaksi',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
                     ),
                   ],
                 ),
@@ -927,19 +801,11 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
                 children: [
                   Text(
                     'Rp ${_formatCurrency(userActivity.totalDeposit)}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.green.shade600,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(fontSize: 11, color: Colors.green.shade600, fontWeight: FontWeight.w500),
                   ),
                   Text(
                     'Rp ${_formatCurrency(userActivity.totalWithdrawal)}',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.red.shade600,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: TextStyle(fontSize: 11, color: Colors.red.shade600, fontWeight: FontWeight.w500),
                   ),
                 ],
               ),
@@ -951,11 +817,7 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
   }
 
   List<int> _getAvailableYears() {
-    final years = _allTransactions
-        .where((t) => t.createdAt != null)
-        .map((t) => t.createdAt!.year)
-        .toSet()
-        .toList();
+    final years = _allTransactions.where((t) => t.createdAt != null).map((t) => t.createdAt!.year).toSet().toList();
 
     years.sort((a, b) => b.compareTo(a)); // Sort descending
 
@@ -969,49 +831,35 @@ class _AdminLaporanPageState extends State<AdminLaporanPage> {
   }
 
   String _getTotalDeposit() {
-    final total = _monthlyReports.fold(
-      0,
-      (sum, report) => sum + report.totalDeposit,
-    );
+    final total = _monthlyReports.fold(0, (sum, report) => sum + report.totalDeposit);
     return 'Rp ${_formatCurrency(total)}';
   }
 
   String _getTotalWithdrawal() {
-    final total = _monthlyReports.fold(
-      0,
-      (sum, report) => sum + report.totalWithdrawal,
-    );
+    final total = _monthlyReports.fold(0, (sum, report) => sum + report.totalWithdrawal);
     return 'Rp ${_formatCurrency(total)}';
   }
 
+  String _getTotalAdminIncome() {
+    final total = _monthlyReports.fold(0, (sum, report) => sum + report.totalDeposit) * .15;
+    return 'Rp ${_formatCurrency(total.ceil())}';
+  }
+
   String _getTotalTransactions() {
-    final total = _monthlyReports.fold(
-      0,
-      (sum, report) => sum + report.transactionCount,
-    );
+    final total = _monthlyReports.fold(0, (sum, report) => sum + report.transactionCount);
     return total.toString();
   }
 
   String _getNetBalance() {
-    final totalDeposit = _monthlyReports.fold(
-      0,
-      (sum, report) => sum + report.totalDeposit,
-    );
-    final totalWithdrawal = _monthlyReports.fold(
-      0,
-      (sum, report) => sum + report.totalWithdrawal,
-    );
+    final totalDeposit = _monthlyReports.fold(0, (sum, report) => sum + report.totalDeposit);
+    final totalWithdrawal = _monthlyReports.fold(0, (sum, report) => sum + report.totalWithdrawal);
     final net = totalDeposit - totalWithdrawal;
     final isPositive = net >= 0;
     return '${isPositive ? '+' : ''}Rp ${_formatCurrency(net.abs())}';
   }
 
   String _formatCurrency(int amount) {
-    return NumberFormat.currency(
-      locale: 'id_ID',
-      symbol: '',
-      decimalDigits: 0,
-    ).format(amount);
+    return NumberFormat.currency(locale: 'id_ID', symbol: '', decimalDigits: 0).format(amount);
   }
 }
 
@@ -1021,12 +869,7 @@ class MonthlyReport {
   final int totalWithdrawal;
   final int transactionCount;
 
-  MonthlyReport(
-    this.month,
-    this.totalDeposit,
-    this.totalWithdrawal,
-    this.transactionCount,
-  );
+  MonthlyReport(this.month, this.totalDeposit, this.totalWithdrawal, this.transactionCount);
 }
 
 class UserActivity {

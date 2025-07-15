@@ -329,11 +329,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                   TextField(
                     controller: emailController,
                     decoration: InputDecoration(
-                      labelText: 'Email',
+                      labelText: 'Username',
                       border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
+                      prefixIcon: Icon(Icons.person),
                     ),
-                    keyboardType: TextInputType.emailAddress,
                   ),
                   SizedBox(height: 16),
                   TextField(
@@ -478,11 +477,10 @@ class _AdminUserPageState extends State<AdminUserPage> {
                   TextField(
                     controller: emailController,
                     decoration: InputDecoration(
-                      labelText: 'Email',
+                      labelText: 'Username',
                       border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.email),
+                      prefixIcon: Icon(Icons.person),
                     ),
-                    keyboardType: TextInputType.emailAddress,
                   ),
                   SizedBox(height: 16),
                   DropdownButtonFormField<UserRole>(
@@ -600,7 +598,7 @@ class _AdminUserPageState extends State<AdminUserPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('Nama: ${user.name}', style: TextStyle(fontWeight: FontWeight.w500)),
-                  Text('Email: ${user.email}'),
+                  Text('Username: ${user.email}'),
                   Text('Role: ${user.role}'),
                 ],
               ),
@@ -640,11 +638,6 @@ class _AdminUserPageState extends State<AdminUserPage> {
       return false;
     }
 
-    if (email.trim().isEmpty || !_isValidEmail(email)) {
-      _showSnackBar('Email tidak valid', Colors.red);
-      return false;
-    }
-
     if (password.trim().isEmpty || password.length < 6) {
       _showSnackBar('Password minimal 6 karakter', Colors.red);
       return false;
@@ -662,11 +655,6 @@ class _AdminUserPageState extends State<AdminUserPage> {
   bool _validateEditForm(String name, String email, String userId) {
     if (name.trim().isEmpty) {
       _showSnackBar('Nama tidak boleh kosong', Colors.red);
-      return false;
-    }
-
-    if (email.trim().isEmpty || !_isValidEmail(email)) {
-      _showSnackBar('Email tidak valid', Colors.red);
       return false;
     }
 

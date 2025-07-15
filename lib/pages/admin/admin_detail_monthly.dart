@@ -1,8 +1,3 @@
-import 'dart:io';
-
-import 'package:excel/excel.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -13,12 +8,14 @@ import 'package:simbah/services/user_service.dart';
 import 'package:simbah/services/waste_service.dart';
 import 'package:simbah/services/transaction_service.dart';
 
-class AdminTransaksiPage extends StatefulWidget {
+class AdminDetailMonthly extends StatefulWidget {
+  const AdminDetailMonthly({required this.qp, super.key});
+  final Map<String, String> qp;
   @override
-  _AdminTransaksiPageState createState() => _AdminTransaksiPageState();
+  _AdminDetailMonthlyState createState() => _AdminDetailMonthlyState();
 }
 
-class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
+class _AdminDetailMonthlyState extends State<AdminDetailMonthly> {
   final UserService _userService = UserService();
   final WasteService _wasteService = WasteService();
   final TransactionService _transactionService = TransactionService();
@@ -29,15 +26,26 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
   List<Map<String, dynamic>> depositItems = [
     {'wasteId': null, 'weight': null},
   ];
+  final Map<String, int> monthMap = {
+    'Jan': 1,
+    'Feb': 2,
+    'Mar': 3,
+    'Apr': 4,
+    'May': 5,
+    'Jun': 6,
+    'Jul': 7,
+    'Aug': 8,
+    'Sep': 9,
+    'Oct': 10,
+    'Nov': 11,
+    'Dec': 12,
+  };
 
   bool _isLoadingUsers = false;
   bool _isLoadingWastes = false;
   bool _isLoadingTransactions = false;
 
-  int _selectedYear = DateTime.now().year;
   String _selectedFilter = 'Semua';
-  bool _isLoading = false;
-  bool _isExporting = false;
 
   @override
   void initState() {
@@ -45,20 +53,6 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
     _loadUsers();
     _loadWasteTypes();
     _loadTransactions();
-  }
-
-  List<int> _getAvailableYears() {
-    final years = _transactions.where((t) => t.createdAt != null).map((t) => t.createdAt!.year).toSet().toList();
-
-    years.sort((a, b) => b.compareTo(a)); // Sort descending
-
-    // Add current year if not present
-    final currentYear = DateTime.now().year;
-    if (!years.contains(currentYear)) {
-      years.insert(0, currentYear);
-    }
-
-    return years.isEmpty ? [currentYear] : years;
   }
 
   int calculateTotalAmount() {
@@ -73,209 +67,6 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
       total += (pricePerKg * weight).round();
     }
     return total;
-  }
-
-  Future<void> _exportToExcel() async {
-    setState(() {
-      _isExporting = true;
-    });
-
-    try {
-      Excel? excel = Excel.createExcel();
-      if (excel == null) throw Exception('Gagal menginisialisasi Excel');
-
-      // Hapus sheet default
-      if (excel.sheets.containsKey('Sheet1')) {
-        excel.delete('Sheet1');
-      }
-
-      Sheet sheet = excel['Laporan Transaksi'];
-      int currentRow = 0;
-
-
-        // Header tabel
-      List<String> headers = [
-        'No',
-        'ID Transaksi',
-        'Tanggal',
-        'Email User',
-        'Tipe Transaksi',
-        'Nama Barang',
-        'Jumlah (berat)',
-        'Harga',
-        'Total',
-        'Total amount (per user)',
-        'Deskripsi',
-      ];
-
-      // Kelompokkan transaksi berdasarkan user
-      Map<String, List<TransactionData>> groupedByUser = {};
-      for (var tx in _transactions) {
-        groupedByUser.putIfAbsent(tx.userId, () => []).add(tx);
-      }
-
-      for (var entry in groupedByUser.entries) {
-        String userId = entry.key;
-        List<TransactionData> userTransactions = entry.value;
-
-        // Ambil info user
-        String userName = 'Unknown';
-        String userEmail = 'Unknown';
-        try {
-          final user = _users.firstWhere((u) => u.id == userId);
-          userName = user.name;
-          userEmail = user.email;
-        } catch (_) {}
-
-        // Header User
-        sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: currentRow)).value = TextCellValue(
-          'User: $userName',
-        );
-        currentRow++;
-
-
-        for (int i = 0; i < headers.length; i++) {
-          var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
-          cell.value = TextCellValue(headers[i]);
-          cell.cellStyle = CellStyle(bold: true, backgroundColorHex: ExcelColor.green200);
-        }
-        currentRow++;
-
-        int no = 1;
-        int totalAmountUser = 0;
-
-        for (var tx in userTransactions) {
-          // Jika transaksi DEPOSIT dan punya item
-          if (tx.type == 'DEPOSIT' && (tx.items?.isNotEmpty ?? false)) {
-            for (var item in tx.items!) {
-              double weight = double.tryParse(item.weightInKg) ?? 0;
-              int price = int.tryParse(item.wasteCategory?.pricePerKg ?? '0') ?? 0;
-              int subtotal = int.tryParse(item.subtotal) ?? 0;
-              totalAmountUser += subtotal;
-
-              List<dynamic> row = [
-                no++,
-                tx.id,
-                _formatDate(tx.createdAt),
-                userEmail,
-                tx.type,
-                item.wasteCategory?.name ?? '-',
-                '${weight.toString()} kg',
-                _formatCurrency(price),
-                _formatCurrency(subtotal),
-                '', // kolom total amount per user (nanti diisi)
-                tx.description ?? '',
-              ];
-
-              for (int j = 0; j < row.length; j++) {
-                sheet.cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: currentRow)).value = TextCellValue(
-                  row[j].toString(),
-                );
-              }
-
-              currentRow++;
-            }
-          }
-          // Jika transaksi WITHDRAWAL (tidak ada item)
-          else if (tx.type == 'WITHDRAWAL') {
-            int amount = int.tryParse(tx.totalAmount) ?? 0;
-            totalAmountUser -= amount; // dikurangi karena penarikan
-
-            List<dynamic> row = [
-              no++,
-              tx.id,
-              _formatDate(tx.createdAt),
-              userEmail,
-              tx.type,
-              '-', // Nama Barang
-              '-', // Berat
-              '-', // Harga
-              _formatCurrency(amount),
-              '', // kolom total per user (nanti diisi)
-              tx.description ?? '',
-            ];
-
-            for (int j = 0; j < row.length; j++) {
-              sheet.cell(CellIndex.indexByColumnRow(columnIndex: j, rowIndex: currentRow)).value = TextCellValue(
-                row[j].toString(),
-              );
-            }
-
-            currentRow++;
-          }
-        }
-
-        // Tambahkan nilai 85% dari total deposit bersih (jika positif)
-        if (totalAmountUser > 0) {
-          int finalAmount = (totalAmountUser * 0.85).toInt();
-          var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: 9, rowIndex: currentRow - 1));
-          cell.value = TextCellValue('${_formatCurrency(finalAmount)} (85%)');
-          cell.cellStyle = CellStyle(bold: true, backgroundColorHex: ExcelColor.yellow100);
-        }
-
-        currentRow += 2; // Spasi antar user
-      }
-
-      // Set lebar kolom
-      for (int i = 0; i < headers.length; i++) {
-        sheet.setColumnWidth(i, 20);
-      }
-
-      // Encode dan simpan
-      List<int>? bytes = excel.encode();
-      if (bytes == null || bytes.isEmpty) {
-        throw Exception('Gagal menghasilkan data Excel');
-      }
-
-      String fileName = 'Laporan_Transaksi_Simbah_${DateFormat('ddMMyyyy_HHmm').format(DateTime.now())}.xlsx';
-
-      String? savedFile = await FilePicker.platform.saveFile(
-        dialogTitle: 'Simpan Laporan Excel',
-        fileName: fileName,
-        type: FileType.custom,
-        allowedExtensions: ['xlsx'],
-        bytes: Uint8List.fromList(bytes),
-      );
-
-      if (savedFile != null) {
-        _showSnackBar('File berhasil disimpan: $fileName', Colors.green);
-      } else {
-        _showSnackBar('Export dibatalkan', Colors.orange);
-      }
-    } catch (e) {
-      print('Export error: $e');
-      _showSnackBar('Gagal export file: ${e.toString()}', Colors.red);
-    } finally {
-      setState(() {
-        _isExporting = false;
-      });
-    }
-  }
-
-  // Fallback method untuk save manual
-  Future<void> _saveFileManually(List<int> bytes, String fileName) async {
-    try {
-      // Try to save to Downloads directory
-      if (Platform.isAndroid) {
-        final downloadsDir = Directory('/storage/emulated/0/Download');
-        if (await downloadsDir.exists()) {
-          final file = File('${downloadsDir.path}/$fileName');
-          await file.writeAsBytes(bytes);
-          _showSnackBar('File berhasil disimpan di Downloads: $fileName', Colors.green);
-          return;
-        }
-      }
-
-      // Fallback to app documents directory
-      final tempDir = Directory.systemTemp;
-      final file = File('${tempDir.path}/$fileName');
-      await file.writeAsBytes(bytes);
-
-      _showSnackBar('File berhasil disimpan: ${file.path}', Colors.green);
-    } catch (e) {
-      print('Manual save error: $e');
-      _showSnackBar('Gagal menyimpan file: ${e.toString()}', Colors.red);
-    }
   }
 
   Future<void> _loadUsers() async {
@@ -346,7 +137,12 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
       if (response.success) {
         setState(() {
           // Convert dari List<Map<String, dynamic>> ke List<TransactionData>
-          _transactions = response.data.cast<TransactionData>();
+          final raw = response.data.cast<TransactionData>();
+          _transactions = raw.where((tx) {
+            if (tx.updatedAt == null) return false;
+            return tx.updatedAt!.month == monthMap["${widget.qp['month']}"] &&
+                tx.updatedAt!.year.toString() == widget.qp['year'];
+          }).toList();
           _transactions.sort((a, b) => a.user!.name.length.compareTo(b.user!.name.length));
           _isLoadingTransactions = false;
         });
@@ -373,25 +169,15 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
       backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: Text(
-          'Transaksi ${_isExporting ? '(Exporting...)' : ''}',
+          'Transaksi ${widget.qp["month"]} ${widget.qp['year']}',
           style: TextStyle(fontWeight: FontWeight.w600, color: Colors.white),
         ),
         backgroundColor: Colors.green.shade600,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.go('/admin/dashboard'),
+          onPressed: () => context.go('/admin/reports'),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.file_download, color: Colors.white),
-            onPressed: _isLoading ? null : _exportToExcel,
-          ),
-          IconButton(
-            icon: Icon(Icons.add, color: Colors.white),
-            onPressed: _showAddTransactionDialog,
-          ),
-        ],
       ),
       body: Column(
         children: [
@@ -417,22 +203,6 @@ class _AdminTransaksiPageState extends State<AdminTransaksiPage> {
                 ),
                 SizedBox(width: 16),
                 Spacer(),
-                Text('Tahun: ', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-                DropdownButton<int>(
-                  value: _selectedYear,
-                  underline: SizedBox(),
-                  items: _getAvailableYears().map((year) {
-                    return DropdownMenuItem(
-                      value: year,
-                      child: Text(year.toString(), style: TextStyle(fontWeight: FontWeight.w500)),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedYear = value!;
-                    });
-                  },
-                ),
               ],
             ),
           ),

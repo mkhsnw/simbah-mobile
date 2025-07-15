@@ -34,16 +34,9 @@ class AdminDashboardPage extends StatelessWidget {
           children: [
             Text(
               'Selamat Datang, Admin!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey.shade800,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.grey.shade800),
             ),
-            Text(
-              'Kelola sistem bank sampah dengan mudah',
-              style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
-            ),
+            Text('Kelola sistem bank sampah dengan mudah', style: TextStyle(fontSize: 16, color: Colors.grey.shade600)),
             SizedBox(height: 32),
 
             Expanded(
@@ -60,14 +53,7 @@ class AdminDashboardPage extends StatelessWidget {
                     Colors.blue,
                     '/admin/transactions',
                   ),
-                  _buildMenuCard(
-                    context,
-                    'Pengguna',
-                    'Manajemen data user',
-                    Icons.people,
-                    Colors.purple,
-                    '/admin/users',
-                  ),
+                  _buildMenuCard(context, 'Pengguna', 'Manajemen data user', Icons.people, Colors.purple, '/admin/users'),
                   // ✅ Menu Baru untuk Withdraw Request
                   _buildMenuCard(
                     context,
@@ -102,14 +88,7 @@ class AdminDashboardPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMenuCard(
-    BuildContext context,
-    String title,
-    String subtitle,
-    IconData icon,
-    Color color,
-    String route,
-  ) {
+  Widget _buildMenuCard(BuildContext context, String title, String subtitle, IconData icon, Color color, String route) {
     return GestureDetector(
       onTap: () => context.push(route),
       child: Container(
@@ -117,33 +96,21 @@ class AdminDashboardPage extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: Offset(0, 2),
-            ),
-          ],
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: Offset(0, 2))],
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
               padding: EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
+              decoration: BoxDecoration(color: color.withOpacity(0.1), borderRadius: BorderRadius.circular(12)),
               child: Icon(icon, size: 32, color: color),
             ),
             SizedBox(height: 16),
             Text(
               title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey.shade800,
-              ),
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey.shade800),
             ),
             SizedBox(height: 4),
             Text(
